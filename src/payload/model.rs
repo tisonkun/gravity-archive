@@ -167,3 +167,16 @@ pub struct Label {
     color: String,
     default: bool,
 }
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct Changes {
+    title: Option<ChangedFrom>,
+    body: Option<ChangedFrom>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct ChangedFrom {
+    from: String,
+}

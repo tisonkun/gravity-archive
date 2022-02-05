@@ -10,6 +10,7 @@ pub mod model;
 pub struct IssuePayload {
     action: String,
     issue: Issue,
+    changes: Option<Changes>,
     repository: Repository,
     sender: Actor,
 }
