@@ -96,6 +96,12 @@ async fn handle_request(req: Request<Body>) -> anyhow::Result<Response<Body>> {
                 .map(Box::new)
                 .map(Payload::IssueComment)
         }
+        "star" => {
+            use gravity::payload::StarPayload;
+            serde_json::from_slice::<StarPayload>(payload.as_ref())
+                .map(Box::new)
+                .map(Payload::Star)
+        }
         event => {
             return Ok(Response::builder()
                 .status(StatusCode::NOT_IMPLEMENTED)

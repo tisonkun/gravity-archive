@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use gravity::payload::{IssueCommentPayload, IssuesPayload};
+use gravity::payload::{IssueCommentPayload, IssuesPayload, StarPayload};
 
 #[test]
 fn test_issues_closed() -> anyhow::Result<()> {
@@ -52,6 +52,22 @@ fn test_issue_comment_created() -> anyhow::Result<()> {
 fn test_issue_comment_deleted() -> anyhow::Result<()> {
     let contents = std::fs::read_to_string("tests/testdata/issue-comment-deleted.json")?;
     let payload: IssueCommentPayload = serde_json::from_str(contents.as_str())?;
+    assert_eq!("deleted", payload.action());
+    Ok(())
+}
+
+#[test]
+fn test_star_created() -> anyhow::Result<()> {
+    let contents = std::fs::read_to_string("tests/testdata/star_created.json")?;
+    let payload: StarPayload = serde_json::from_str(contents.as_str())?;
+    assert_eq!("created", payload.action());
+    Ok(())
+}
+
+#[test]
+fn test_star_deleted() -> anyhow::Result<()> {
+    let contents = std::fs::read_to_string("tests/testdata/star_deleted.json")?;
+    let payload: StarPayload = serde_json::from_str(contents.as_str())?;
     assert_eq!("deleted", payload.action());
     Ok(())
 }
