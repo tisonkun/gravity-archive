@@ -85,8 +85,8 @@ async fn handle_request(req: Request<Body>) -> anyhow::Result<Response<Body>> {
 
     let payload = match event.as_str() {
         "issues" => {
-            use gravity::payload::IssuePayload;
-            serde_json::from_slice::<IssuePayload>(payload.as_ref()).map(Payload::Issue)
+            use gravity::payload::IssuesPayload;
+            serde_json::from_slice::<IssuesPayload>(payload.as_ref()).map(Payload::Issues)
         }
         event => {
             return Ok(Response::builder()

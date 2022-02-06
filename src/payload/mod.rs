@@ -21,12 +21,12 @@ pub mod model;
 
 #[derive(Debug)]
 pub enum Payload {
-    Issue(IssuePayload),
+    Issues(IssuesPayload),
 }
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
 #[get = "pub"]
-pub struct IssuePayload {
+pub struct IssuesPayload {
     action: String,
     issue: Issue,
     changes: Option<Changes>,

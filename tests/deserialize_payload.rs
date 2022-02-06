@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use gravity::payload::IssuePayload;
+use gravity::payload::IssuesPayload;
 
 #[test]
 fn test_issue_closed() -> anyhow::Result<()> {
     let contents = std::fs::read_to_string("tests/testdata/issue-closed.json")?;
-    let payload: IssuePayload = serde_json::from_str(contents.as_str())?;
+    let payload: IssuesPayload = serde_json::from_str(contents.as_str())?;
     assert_eq!("closed", payload.action());
     Ok(())
 }
@@ -25,7 +25,7 @@ fn test_issue_closed() -> anyhow::Result<()> {
 #[test]
 fn test_issue_edited() -> anyhow::Result<()> {
     let contents = std::fs::read_to_string("tests/testdata/issue-edited.json")?;
-    let payload: IssuePayload = serde_json::from_str(contents.as_str())?;
+    let payload: IssuesPayload = serde_json::from_str(contents.as_str())?;
     assert_eq!("edited", payload.action());
     assert!(payload.changes().is_some());
     Ok(())
