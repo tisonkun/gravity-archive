@@ -15,16 +15,16 @@
 use gravity::payload::IssuesPayload;
 
 #[test]
-fn test_issue_closed() -> anyhow::Result<()> {
-    let contents = std::fs::read_to_string("tests/testdata/issue-closed.json")?;
+fn test_issues_closed() -> anyhow::Result<()> {
+    let contents = std::fs::read_to_string("testdata/issues-closed.json")?;
     let payload: IssuesPayload = serde_json::from_str(contents.as_str())?;
     assert_eq!("closed", payload.action());
     Ok(())
 }
 
 #[test]
-fn test_issue_edited() -> anyhow::Result<()> {
-    let contents = std::fs::read_to_string("tests/testdata/issue-edited.json")?;
+fn test_issues_edited() -> anyhow::Result<()> {
+    let contents = std::fs::read_to_string("testdata/issues-edited.json")?;
     let payload: IssuesPayload = serde_json::from_str(contents.as_str())?;
     assert_eq!("edited", payload.action());
     assert!(payload.changes().is_some());
