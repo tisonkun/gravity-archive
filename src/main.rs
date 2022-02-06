@@ -86,11 +86,14 @@ async fn handle_request(req: Request<Body>) -> anyhow::Result<Response<Body>> {
     let payload = match event.as_str() {
         "issues" => {
             use gravity::payload::IssuesPayload;
-            serde_json::from_slice::<IssuesPayload>(payload.as_ref()).map(Payload::Issues)
+            serde_json::from_slice::<IssuesPayload>(payload.as_ref())
+                .map(Box::new)
+                .map(Payload::Issues)
         }
         "issue_comment" => {
             use gravity::payload::IssueCommentPayload;
             serde_json::from_slice::<IssueCommentPayload>(payload.as_ref())
+                .map(Box::new)
                 .map(Payload::IssueComment)
         }
         event => {

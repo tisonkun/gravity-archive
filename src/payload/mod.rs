@@ -21,8 +21,8 @@ pub mod model;
 
 #[derive(Debug)]
 pub enum Payload {
-    Issues(IssuesPayload),
-    IssueComment(IssueCommentPayload),
+    Issues(Box<IssuesPayload>),
+    IssueComment(Box<IssueCommentPayload>),
 }
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
