@@ -20,7 +20,7 @@ use crate::payload::model::*;
 pub mod model;
 
 #[derive(Debug)]
-pub enum PayLoad {
+pub enum Payload {
     Issue(IssuePayload),
 }
 

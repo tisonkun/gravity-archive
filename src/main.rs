@@ -14,7 +14,7 @@
 
 use std::{convert::Infallible, net::SocketAddr};
 
-use gravity::payload::PayLoad;
+use gravity::payload::Payload;
 use hyper::{Body, Method, Request, Response, Server, StatusCode};
 
 async fn handle_request(req: Request<Body>) -> anyhow::Result<Response<Body>> {
@@ -86,7 +86,7 @@ async fn handle_request(req: Request<Body>) -> anyhow::Result<Response<Body>> {
     let payload = match event.as_str() {
         "issues" => {
             use gravity::payload::IssuePayload;
-            serde_json::from_slice::<IssuePayload>(payload.as_ref()).map(PayLoad::Issue)
+            serde_json::from_slice::<IssuePayload>(payload.as_ref()).map(Payload::Issue)
         }
         event => {
             return Ok(Response::builder()
