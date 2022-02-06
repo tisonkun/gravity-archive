@@ -19,6 +19,11 @@ use crate::payload::model::*;
 
 pub mod model;
 
+#[derive(Debug)]
+pub enum PayLoad {
+    Issue(IssuePayload),
+}
+
 #[derive(Deserialize, Serialize, Debug, Getters)]
 #[get = "pub"]
 pub struct IssuePayload {

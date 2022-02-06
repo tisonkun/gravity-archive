@@ -14,6 +14,7 @@
 
 use std::{convert::Infallible, net::SocketAddr};
 
+use gravity::payload::PayLoad;
 use hyper::{Body, Method, Request, Response, Server, StatusCode};
 
 async fn handle_request(req: Request<Body>) -> anyhow::Result<Response<Body>> {
@@ -21,7 +22,7 @@ async fn handle_request(req: Request<Body>) -> anyhow::Result<Response<Body>> {
         let method = req.method();
         return Ok(Response::builder()
             .status(StatusCode::BAD_REQUEST)
-            .body(Body::from(format!("ONLY ACCEPT POST (GET: {})\n", method)))
+            .body(Body::from(format!("ONLY ACCEPT POST (GOT: {})\n", method)))
             .unwrap());
     }
 
@@ -29,7 +30,7 @@ async fn handle_request(req: Request<Body>) -> anyhow::Result<Response<Body>> {
         let path = req.uri().path();
         return Ok(Response::builder()
             .status(StatusCode::NOT_FOUND)
-            .body(Body::from(format!("404 Not Found (GET: {})\n", path)))
+            .body(Body::from(format!("404 Not Found (GOT: {})\n", path)))
             .unwrap());
     }
 
@@ -39,14 +40,62 @@ async fn handle_request(req: Request<Body>) -> anyhow::Result<Response<Body>> {
         return Ok(Response::builder()
             .status(StatusCode::BAD_REQUEST)
             .body(Body::from(format!(
-                "ONLY ACCEPT application/json (GET: {})\n",
+                "ONLY ACCEPT application/json (GOT: {})\n",
                 content_type
             )))
             .unwrap());
     }
 
+    let event = headers
+        .get("X-GitHub-Event")
+        .unwrap()
+        .to_str()
+        .unwrap()
+        .to_string();
+
+    let signature = headers
+        .get("X-Hub-Signature-256")
+        .unwrap()
+        .to_str()
+        .unwrap()
+        .to_string();
+
     let payload = hyper::body::to_bytes(req.into_body()).await?;
-    let payload = serde_json::from_slice::<gravity::payload::IssuePayload>(payload.as_ref());
+
+    if let Ok(secret) = std::env::var("WEBHOOK_SECRET") {
+        use hmac::{Hmac, Mac};
+        use sha2::Sha256;
+
+        type HmacSha256 = Hmac<Sha256>;
+
+        let mut mac = HmacSha256::new_from_slice(secret.as_bytes())?;
+        mac.update(payload.as_ref());
+        let result = mac.finalize().into_bytes();
+        let result = format!("sha256={}", hex::encode(result));
+        if result != signature {
+            return Ok(Response::builder()
+                .status(StatusCode::BAD_REQUEST)
+                .body(Body::from(format!(
+                    "SIGNATURE MISMATCH (EXPECT: {}, GOT: {})\n",
+                    signature, result
+                )))
+                .unwrap());
+        }
+    }
+
+    let payload = match event.as_str() {
+        "issues" => {
+            use gravity::payload::IssuePayload;
+            serde_json::from_slice::<IssuePayload>(payload.as_ref()).map(PayLoad::Issue)
+        }
+        event => {
+            return Ok(Response::builder()
+                .status(StatusCode::NOT_IMPLEMENTED)
+                .body(Body::from(format!("UNSUPPORTED EVENT (GOT: {})\n", event)))
+                .unwrap());
+        }
+    };
+
     println!("payload: {:?}", payload);
 
     Ok(Response::builder()
