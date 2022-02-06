@@ -88,6 +88,11 @@ async fn handle_request(req: Request<Body>) -> anyhow::Result<Response<Body>> {
             use gravity::payload::IssuesPayload;
             serde_json::from_slice::<IssuesPayload>(payload.as_ref()).map(Payload::Issues)
         }
+        "issue_comment" => {
+            use gravity::payload::IssueCommentPayload;
+            serde_json::from_slice::<IssueCommentPayload>(payload.as_ref())
+                .map(Payload::IssueComment)
+        }
         event => {
             return Ok(Response::builder()
                 .status(StatusCode::NOT_IMPLEMENTED)

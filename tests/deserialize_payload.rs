@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use gravity::payload::IssuesPayload;
+use gravity::payload::{IssueCommentPayload, IssuesPayload};
 
 #[test]
 fn test_issues_closed() -> anyhow::Result<()> {
@@ -28,5 +28,30 @@ fn test_issues_edited() -> anyhow::Result<()> {
     let payload: IssuesPayload = serde_json::from_str(contents.as_str())?;
     assert_eq!("edited", payload.action());
     assert!(payload.changes().is_some());
+    Ok(())
+}
+
+#[test]
+fn test_issue_comment_edited() -> anyhow::Result<()> {
+    let contents = std::fs::read_to_string("tests/testdata/issue-comment-edited.json")?;
+    let payload: IssueCommentPayload = serde_json::from_str(contents.as_str())?;
+    assert_eq!("edited", payload.action());
+    assert!(payload.changes().is_some());
+    Ok(())
+}
+
+#[test]
+fn test_issue_comment_created() -> anyhow::Result<()> {
+    let contents = std::fs::read_to_string("tests/testdata/issue-comment-created.json")?;
+    let payload: IssueCommentPayload = serde_json::from_str(contents.as_str())?;
+    assert_eq!("created", payload.action());
+    Ok(())
+}
+
+#[test]
+fn test_issue_comment_deleted() -> anyhow::Result<()> {
+    let contents = std::fs::read_to_string("tests/testdata/issue-comment-deleted.json")?;
+    let payload: IssueCommentPayload = serde_json::from_str(contents.as_str())?;
+    assert_eq!("deleted", payload.action());
     Ok(())
 }

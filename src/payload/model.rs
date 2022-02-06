@@ -184,6 +184,23 @@ pub struct Label {
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
 #[get = "pub"]
+pub struct Comment {
+    url: String,
+    html_url: String,
+    issue_url: String,
+    id: i64,
+    node_id: String,
+    user: Actor,
+    #[serde(with = "time::serde::rfc3339")]
+    created_at: OffsetDateTime,
+    #[serde(with = "time::serde::rfc3339")]
+    updated_at: OffsetDateTime,
+    body: String,
+    author_association: String,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
 pub struct Changes {
     title: Option<ChangedFrom>,
     body: Option<ChangedFrom>,

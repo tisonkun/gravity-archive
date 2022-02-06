@@ -22,6 +22,7 @@ pub mod model;
 #[derive(Debug)]
 pub enum Payload {
     Issues(IssuesPayload),
+    IssueComment(IssueCommentPayload),
 }
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
@@ -29,6 +30,17 @@ pub enum Payload {
 pub struct IssuesPayload {
     action: String,
     issue: Issue,
+    changes: Option<Changes>,
+    repository: Repository,
+    sender: Actor,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct IssueCommentPayload {
+    action: String,
+    issue: Issue,
+    comment: Comment,
     changes: Option<Changes>,
     repository: Repository,
     sender: Actor,
