@@ -21,23 +21,25 @@ fn test_specification() -> anyhow::Result<()> {
     let specs = serde_json::from_str::<Value>(specs.as_str())?;
     for spec in specs.as_array().unwrap() {
         let spec = spec.as_object().unwrap();
+
         let event_type = spec.get("name").and_then(Value::as_str).unwrap();
-        match Payload::convertor(event_type) {
+        let convertor = match Payload::convertor(event_type) {
             None => continue,
-            Some(convertor) => {
-                println!("testing event type {}...", event_type);
-                let examples = spec.get("examples").and_then(Value::as_array).unwrap();
-                for example in examples {
-                    let payload = (convertor)(example.to_string().as_bytes());
-                    assert!(
-                        payload.is_ok(),
-                        "cannot parse supported event type {} with:\n\treason:  {}\n\tpayload: {}\n",
-                        event_type,
-                        payload.unwrap_err(),
-                        example,
-                    );
-                }
-            }
+            Some(convertor) => convertor,
+        };
+
+        println!("testing event type {}...", event_type);
+
+        let examples = spec.get("examples").and_then(Value::as_array).unwrap();
+        for example in examples {
+            let payload = (convertor)(example.to_string().as_bytes());
+            assert!(
+                payload.is_ok(),
+                "cannot parse supported event type {} with:\n\treason:  {}\n\tpayload: {}\n",
+                event_type,
+                payload.unwrap_err(),
+                example,
+            );
         }
     }
     Ok(())
