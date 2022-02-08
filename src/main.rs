@@ -83,31 +83,14 @@ async fn handle_request(req: Request<Body>) -> anyhow::Result<Response<Body>> {
         }
     }
 
-    let payload = match event.as_str() {
-        "issues" => {
-            use gravity::payload::IssuesPayload;
-            serde_json::from_slice::<IssuesPayload>(payload.as_ref())
-                .map(Box::new)
-                .map(Payload::Issues)
-        }
-        "issue_comment" => {
-            use gravity::payload::IssueCommentPayload;
-            serde_json::from_slice::<IssueCommentPayload>(payload.as_ref())
-                .map(Box::new)
-                .map(Payload::IssueComment)
-        }
-        "star" => {
-            use gravity::payload::StarPayload;
-            serde_json::from_slice::<StarPayload>(payload.as_ref())
-                .map(Box::new)
-                .map(Payload::Star)
-        }
-        event => {
+    let payload = match Payload::convertor(event.as_str()) {
+        None => {
             return Ok(Response::builder()
                 .status(StatusCode::NOT_IMPLEMENTED)
                 .body(Body::from(format!("UNSUPPORTED EVENT (GOT: {})\n", event)))
                 .unwrap());
         }
+        Some(convertor) => (convertor)(payload.as_ref()),
     };
 
     println!("payload: {:?}", payload);

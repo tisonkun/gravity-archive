@@ -14,6 +14,7 @@
 
 use getset::Getters;
 use serde::{Deserialize, Serialize};
+use serde_json::Result as SerdeJsonResult;
 use time::OffsetDateTime;
 
 use crate::payload::model::*;
@@ -25,6 +26,40 @@ pub enum Payload {
     Issues(Box<IssuesPayload>),
     IssueComment(Box<IssueCommentPayload>),
     Star(Box<StarPayload>),
+}
+
+type Convertor = for<'a> fn(&'a [u8]) -> SerdeJsonResult<Payload>;
+
+impl Payload {
+    pub fn convertor(event: &str) -> Option<Convertor> {
+        match event {
+            "issues" => {
+                fn convert_issues(payload: &[u8]) -> SerdeJsonResult<Payload> {
+                    serde_json::from_slice::<IssuesPayload>(payload)
+                        .map(Box::new)
+                        .map(Payload::Issues)
+                }
+                Some(convert_issues)
+            }
+            "issue_comment" => {
+                fn convert_issue_comment(payload: &[u8]) -> SerdeJsonResult<Payload> {
+                    serde_json::from_slice::<IssueCommentPayload>(payload)
+                        .map(Box::new)
+                        .map(Payload::IssueComment)
+                }
+                Some(convert_issue_comment)
+            }
+            "star" => {
+                fn convert_star(payload: &[u8]) -> SerdeJsonResult<Payload> {
+                    serde_json::from_slice::<StarPayload>(payload)
+                        .map(Box::new)
+                        .map(Payload::Star)
+                }
+                Some(convert_star)
+            }
+            _ => None,
+        }
+    }
 }
 
 #[derive(Deserialize, Serialize, Debug, Getters)]

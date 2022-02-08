@@ -12,62 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use gravity::payload::{IssueCommentPayload, IssuesPayload, StarPayload};
+use gravity::payload::Payload;
+use serde_json::Value;
 
 #[test]
-fn test_issues_closed() -> anyhow::Result<()> {
-    let contents = std::fs::read_to_string("tests/testdata/issues-closed.json")?;
-    let payload: IssuesPayload = serde_json::from_str(contents.as_str())?;
-    assert_eq!("closed", payload.action());
-    Ok(())
-}
-
-#[test]
-fn test_issues_edited() -> anyhow::Result<()> {
-    let contents = std::fs::read_to_string("tests/testdata/issues-edited.json")?;
-    let payload: IssuesPayload = serde_json::from_str(contents.as_str())?;
-    assert_eq!("edited", payload.action());
-    assert!(payload.changes().is_some());
-    Ok(())
-}
-
-#[test]
-fn test_issue_comment_edited() -> anyhow::Result<()> {
-    let contents = std::fs::read_to_string("tests/testdata/issue-comment-edited.json")?;
-    let payload: IssueCommentPayload = serde_json::from_str(contents.as_str())?;
-    assert_eq!("edited", payload.action());
-    assert!(payload.changes().is_some());
-    Ok(())
-}
-
-#[test]
-fn test_issue_comment_created() -> anyhow::Result<()> {
-    let contents = std::fs::read_to_string("tests/testdata/issue-comment-created.json")?;
-    let payload: IssueCommentPayload = serde_json::from_str(contents.as_str())?;
-    assert_eq!("created", payload.action());
-    Ok(())
-}
-
-#[test]
-fn test_issue_comment_deleted() -> anyhow::Result<()> {
-    let contents = std::fs::read_to_string("tests/testdata/issue-comment-deleted.json")?;
-    let payload: IssueCommentPayload = serde_json::from_str(contents.as_str())?;
-    assert_eq!("deleted", payload.action());
-    Ok(())
-}
-
-#[test]
-fn test_star_created() -> anyhow::Result<()> {
-    let contents = std::fs::read_to_string("tests/testdata/star_created.json")?;
-    let payload: StarPayload = serde_json::from_str(contents.as_str())?;
-    assert_eq!("created", payload.action());
-    Ok(())
-}
-
-#[test]
-fn test_star_deleted() -> anyhow::Result<()> {
-    let contents = std::fs::read_to_string("tests/testdata/star_deleted.json")?;
-    let payload: StarPayload = serde_json::from_str(contents.as_str())?;
-    assert_eq!("deleted", payload.action());
+fn test_specification() -> anyhow::Result<()> {
+    let specs = std::fs::read_to_string("tests/testdata/specification.json")?;
+    let specs = serde_json::from_str::<Value>(specs.as_str())?;
+    for spec in specs.as_array().unwrap() {
+        let spec = spec.as_object().unwrap();
+        let event_type = spec.get("name").and_then(Value::as_str).unwrap();
+        match Payload::convertor(event_type) {
+            None => continue,
+            Some(convertor) => {
+                println!("testing event type {}...", event_type);
+                let examples = spec.get("examples").and_then(Value::as_array).unwrap();
+                for example in examples {
+                    let payload = (convertor)(example.to_string().as_bytes());
+                    assert!(
+                        payload.is_ok(),
+                        "cannot parse supported event type {} with:\n\treason:  {}\n\tpayload: {}\n",
+                        event_type,
+                        payload.unwrap_err(),
+                        example,
+                    );
+                }
+            }
+        }
+    }
     Ok(())
 }
