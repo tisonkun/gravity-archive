@@ -1,0 +1,22 @@
+name: Sync
+
+on:
+  schedule:
+    - cron: '25 3 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  spec:
+    if: (github.event_name == 'schedule' && github.repository == 'tisonkun/gravity') || (github.event_name != 'schedule')
+    name: Sync GitHub Event Specification
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Fetch up-to-date specification
+        run: curl -O https://octokit.github.io/webhooks/payload-examples/api.github.com/index.json
+      - name: Check diff
+        run: diff index.json tests/testdata/specification.json
