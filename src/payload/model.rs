@@ -273,18 +273,17 @@ pub struct PullRequest {
     labels: Vec<Label>,
     head: Ref,
     base: Ref,
-    #[serde(alias = "_links")]
-    links: Links,
-    merged: bool,
+    _links: PullRequestLinks,
+    merged: Option<bool>,
     mergeable: Option<bool>,
-    mergeable_state: String,
+    mergeable_state: Option<String>,
     merged_by: Option<Actor>,
-    comments: i64,
-    review_comments: i64,
-    commits: i64,
-    additions: i64,
-    deletions: i64,
-    changed_files: i64,
+    comments: Option<i64>,
+    review_comments: Option<i64>,
+    commits: Option<i64>,
+    additions: Option<i64>,
+    deletions: Option<i64>,
+    changed_files: Option<i64>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
@@ -295,7 +294,7 @@ pub struct Link {
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
 #[get = "pub"]
-pub struct Links {
+pub struct PullRequestLinks {
     #[serde(alias = "self")]
     this: Link,
     html: Link,
@@ -309,6 +308,13 @@ pub struct Links {
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
 #[get = "pub"]
+pub struct ReviewLinks {
+    html: Link,
+    pull_request: Link,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
 pub struct Ref {
     label: String,
     #[serde(alias = "ref")]
@@ -316,4 +322,21 @@ pub struct Ref {
     sha: String,
     user: Actor,
     repo: Repository,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct Review {
+    id: i64,
+    node_id: String,
+    author_association: String,
+    user: Actor,
+    body: Option<String>,
+    commit_id: String,
+    #[serde(with = "time::serde::rfc3339")]
+    submitted_at: OffsetDateTime,
+    state: String,
+    html_url: String,
+    pull_request_url: String,
+    _links: ReviewLinks,
 }

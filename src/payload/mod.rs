@@ -26,6 +26,7 @@ pub enum Payload {
     Issues(Box<IssuesPayload>),
     IssueComment(Box<IssueCommentPayload>),
     PullRequest(Box<PullRequestPayload>),
+    PullRequestReview(Box<PullRequestReviewPayload>),
     Star(Box<StarPayload>),
 }
 
@@ -57,6 +58,14 @@ impl Payload {
                         .map(Payload::PullRequest)
                 }
                 Some(convert_pull_request)
+            }
+            "pull_request_review" => {
+                fn convert_pull_request_review(payload: &[u8]) -> SerdeJsonResult<Payload> {
+                    serde_json::from_slice::<PullRequestReviewPayload>(payload)
+                        .map(Box::new)
+                        .map(Payload::PullRequestReview)
+                }
+                Some(convert_pull_request_review)
             }
             "star" => {
                 fn convert_star(payload: &[u8]) -> SerdeJsonResult<Payload> {
@@ -106,6 +115,17 @@ pub struct PullRequestPayload {
     requested_reviewer: Option<Actor>,
     requested_team: Option<Team>,
     installation: Option<Installation>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct PullRequestReviewPayload {
+    action: String,
+    review: Review,
+    pull_request: PullRequest,
+    repository: Repository,
+    sender: Actor,
+    installation: Installation,
 }
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
