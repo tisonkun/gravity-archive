@@ -23,67 +23,36 @@ pub mod model;
 
 #[derive(Debug)]
 pub enum Payload {
-    Issues(Box<IssuesPayload>),
-    IssueComment(Box<IssueCommentPayload>),
-    PullRequest(Box<PullRequestPayload>),
-    PullRequestReview(Box<PullRequestReviewPayload>),
-    PullRequestReviewComment(Box<PullRequestReviewCommentPayload>),
-    Star(Box<StarPayload>),
+    IssuesEvent(Box<IssuesEvent>),
+    IssueCommentEvent(Box<IssueCommentEvent>),
+    PullRequestEvent(Box<PullRequestEvent>),
+    PullRequestReviewEvent(Box<PullRequestReviewEvent>),
+    PullRequestReviewCommentEvent(Box<PullRequestReviewCommentEvent>),
+    StarEvent(Box<StarEvent>),
 }
 
 type Convertor = for<'a> fn(&'a [u8]) -> SerdeJsonResult<Payload>;
 
+macro_rules! convertor_of {
+    ($event:ident) => {{
+        fn convert(payload: &[u8]) -> SerdeJsonResult<Payload> {
+            serde_json::from_slice::<$event>(payload)
+                .map(Box::new)
+                .map(Payload::$event)
+        }
+        Some(convert)
+    }};
+}
+
 impl Payload {
     pub fn convertor(event: &str) -> Option<Convertor> {
         match event {
-            "issues" => {
-                fn convert_issues(payload: &[u8]) -> SerdeJsonResult<Payload> {
-                    serde_json::from_slice::<IssuesPayload>(payload)
-                        .map(Box::new)
-                        .map(Payload::Issues)
-                }
-                Some(convert_issues)
-            }
-            "issue_comment" => {
-                fn convert_issue_comment(payload: &[u8]) -> SerdeJsonResult<Payload> {
-                    serde_json::from_slice::<IssueCommentPayload>(payload)
-                        .map(Box::new)
-                        .map(Payload::IssueComment)
-                }
-                Some(convert_issue_comment)
-            }
-            "pull_request" => {
-                fn convert_pull_request(payload: &[u8]) -> SerdeJsonResult<Payload> {
-                    serde_json::from_slice::<PullRequestPayload>(payload)
-                        .map(Box::new)
-                        .map(Payload::PullRequest)
-                }
-                Some(convert_pull_request)
-            }
-            "pull_request_review" => {
-                fn convert_pull_request_review(payload: &[u8]) -> SerdeJsonResult<Payload> {
-                    serde_json::from_slice::<PullRequestReviewPayload>(payload)
-                        .map(Box::new)
-                        .map(Payload::PullRequestReview)
-                }
-                Some(convert_pull_request_review)
-            }
-            "pull_request_review_comment" => {
-                fn convert_pull_request_review_comment(payload: &[u8]) -> SerdeJsonResult<Payload> {
-                    serde_json::from_slice::<PullRequestReviewCommentPayload>(payload)
-                        .map(Box::new)
-                        .map(Payload::PullRequestReviewComment)
-                }
-                Some(convert_pull_request_review_comment)
-            }
-            "star" => {
-                fn convert_star(payload: &[u8]) -> SerdeJsonResult<Payload> {
-                    serde_json::from_slice::<StarPayload>(payload)
-                        .map(Box::new)
-                        .map(Payload::Star)
-                }
-                Some(convert_star)
-            }
+            "issues" => convertor_of!(IssuesEvent),
+            "issues_comment" => convertor_of!(IssueCommentEvent),
+            "pull_request" => convertor_of!(PullRequestEvent),
+            "pull_request_review" => convertor_of!(PullRequestReviewEvent),
+            "pull_request_review_comment" => convertor_of!(PullRequestReviewCommentEvent),
+            "star" => convertor_of!(StarEvent),
             _ => None,
         }
     }
@@ -91,7 +60,7 @@ impl Payload {
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
 #[get = "pub"]
-pub struct IssuesPayload {
+pub struct IssuesEvent {
     action: String,
     issue: Issue,
     changes: Option<Changes>,
@@ -101,7 +70,7 @@ pub struct IssuesPayload {
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
 #[get = "pub"]
-pub struct IssueCommentPayload {
+pub struct IssueCommentEvent {
     action: String,
     issue: Issue,
     comment: IssueComment,
@@ -112,7 +81,7 @@ pub struct IssueCommentPayload {
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
 #[get = "pub"]
-pub struct PullRequestPayload {
+pub struct PullRequestEvent {
     action: String,
     number: i64,
     pull_request: PullRequest,
@@ -128,7 +97,7 @@ pub struct PullRequestPayload {
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
 #[get = "pub"]
-pub struct PullRequestReviewPayload {
+pub struct PullRequestReviewEvent {
     action: String,
     review: Review,
     pull_request: PullRequest,
@@ -139,7 +108,7 @@ pub struct PullRequestReviewPayload {
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
 #[get = "pub"]
-pub struct PullRequestReviewCommentPayload {
+pub struct PullRequestReviewCommentEvent {
     action: String,
     comment: PullRequestReviewComment,
     pull_request: PullRequest,
@@ -150,7 +119,7 @@ pub struct PullRequestReviewCommentPayload {
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
 #[get = "pub"]
-pub struct StarPayload {
+pub struct StarEvent {
     action: String,
     #[serde(with = "option_time_rfc3339")]
     starred_at: Option<OffsetDateTime>,
