@@ -25,6 +25,7 @@ pub mod model;
 pub enum Payload {
     Issues(Box<IssuesPayload>),
     IssueComment(Box<IssueCommentPayload>),
+    PullRequest(Box<PullRequestPayload>),
     Star(Box<StarPayload>),
 }
 
@@ -48,6 +49,14 @@ impl Payload {
                         .map(Payload::IssueComment)
                 }
                 Some(convert_issue_comment)
+            }
+            "pull_request" => {
+                fn convert_pull_request(payload: &[u8]) -> SerdeJsonResult<Payload> {
+                    serde_json::from_slice::<PullRequestPayload>(payload)
+                        .map(Box::new)
+                        .map(Payload::PullRequest)
+                }
+                Some(convert_pull_request)
             }
             "star" => {
                 fn convert_star(payload: &[u8]) -> SerdeJsonResult<Payload> {
@@ -81,6 +90,22 @@ pub struct IssueCommentPayload {
     changes: Option<Changes>,
     repository: Repository,
     sender: Actor,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct PullRequestPayload {
+    action: String,
+    number: i64,
+    pull_request: PullRequest,
+    label: Option<Label>,
+    repository: Repository,
+    sender: Actor,
+    changes: Option<Changes>,
+    assignee: Option<Actor>,
+    requested_reviewer: Option<Actor>,
+    requested_team: Option<Team>,
+    installation: Option<Installation>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
