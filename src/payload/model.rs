@@ -184,7 +184,7 @@ pub struct Label {
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
 #[get = "pub"]
-pub struct Comment {
+pub struct IssueComment {
     url: String,
     html_url: String,
     issue_url: String,
@@ -197,6 +197,30 @@ pub struct Comment {
     updated_at: OffsetDateTime,
     body: String,
     author_association: String,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct PullRequestReviewComment {
+    url: String,
+    html_url: String,
+    pull_request_url: String,
+    diff_hunk: String,
+    path: String,
+    id: i64,
+    node_id: String,
+    user: Actor,
+    #[serde(with = "time::serde::rfc3339")]
+    created_at: OffsetDateTime,
+    #[serde(with = "time::serde::rfc3339")]
+    updated_at: OffsetDateTime,
+    body: String,
+    author_association: String,
+    position: i64,
+    original_position: i64,
+    commit_id: String,
+    original_commit_id: String,
+    _links: ReviewCommentLinks,
 }
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
@@ -263,7 +287,7 @@ pub struct PullRequest {
     assignee: Option<Actor>,
     assignees: Vec<Actor>,
     milestone: Option<Milestone>,
-    draft: bool,
+    draft: Option<bool>,
     commits_url: String,
     review_comments_url: String,
     review_comment_url: String,
@@ -309,6 +333,15 @@ pub struct PullRequestLinks {
 #[derive(Deserialize, Serialize, Debug, Getters)]
 #[get = "pub"]
 pub struct ReviewLinks {
+    html: Link,
+    pull_request: Link,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct ReviewCommentLinks {
+    #[serde(alias = "self")]
+    this: Link,
     html: Link,
     pull_request: Link,
 }
