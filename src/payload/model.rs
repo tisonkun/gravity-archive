@@ -211,3 +211,109 @@ pub struct Changes {
 pub struct ChangedFrom {
     from: String,
 }
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct Team {
+    name: String,
+    id: i64,
+    node_id: String,
+    slug: String,
+    description: String,
+    privacy: String,
+    url: String,
+    html_url: String,
+    members_url: String,
+    repositories_url: String,
+    permission: String,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct Installation {
+    id: i64,
+    node_id: String,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct PullRequest {
+    url: String,
+    id: i64,
+    node_id: String,
+    html_url: String,
+    diff_url: String,
+    patch_url: String,
+    issue_url: String,
+    number: i64,
+    state: String,
+    locked: bool,
+    title: String,
+    user: Actor,
+    body: Option<String>,
+    #[serde(with = "time::serde::rfc3339")]
+    created_at: OffsetDateTime,
+    #[serde(with = "time::serde::rfc3339")]
+    updated_at: OffsetDateTime,
+    #[serde(with = "super::option_time_rfc3339")]
+    closed_at: Option<OffsetDateTime>,
+    #[serde(with = "super::option_time_rfc3339")]
+    merged_at: Option<OffsetDateTime>,
+    merge_commit_sha: Option<String>,
+    assignee: Option<Actor>,
+    assignees: Vec<Actor>,
+    milestone: Option<Milestone>,
+    draft: bool,
+    commits_url: String,
+    review_comments_url: String,
+    review_comment_url: String,
+    comments_url: String,
+    statuses_url: String,
+    requested_reviewers: Vec<Actor>,
+    labels: Vec<Label>,
+    head: Ref,
+    base: Ref,
+    #[serde(alias = "_links")]
+    links: Links,
+    merged: bool,
+    mergeable: Option<bool>,
+    mergeable_state: String,
+    merged_by: Option<Actor>,
+    comments: i64,
+    review_comments: i64,
+    commits: i64,
+    additions: i64,
+    deletions: i64,
+    changed_files: i64,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct Link {
+    href: String,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct Links {
+    #[serde(alias = "self")]
+    this: Link,
+    html: Link,
+    issue: Link,
+    comments: Link,
+    review_comments: Link,
+    review_comment: Link,
+    commits: Link,
+    statuses: Link,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct Ref {
+    label: String,
+    #[serde(alias = "ref")]
+    refer: String,
+    sha: String,
+    user: Actor,
+    repo: Repository,
+}
