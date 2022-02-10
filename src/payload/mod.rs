@@ -23,13 +23,14 @@ pub mod model;
 
 #[derive(Debug)]
 pub enum Payload {
+    CheckRunEvent(Box<CheckRunEvent>),
+    CheckSuiteEvent(Box<CheckSuiteEvent>),
     IssuesEvent(Box<IssuesEvent>),
     IssueCommentEvent(Box<IssueCommentEvent>),
     PullRequestEvent(Box<PullRequestEvent>),
     PullRequestReviewEvent(Box<PullRequestReviewEvent>),
     PullRequestReviewCommentEvent(Box<PullRequestReviewCommentEvent>),
     StarEvent(Box<StarEvent>),
-    CheckRunEvent(Box<CheckRunEvent>),
 }
 
 type Convertor = for<'a> fn(&'a [u8]) -> SerdeJsonResult<Payload>;
@@ -49,6 +50,7 @@ impl Payload {
     pub fn convertor(event: &str) -> Option<Convertor> {
         match event {
             "check_run" => convertor_of!(CheckRunEvent),
+            "check_suite" => convertor_of!(CheckSuiteEvent),
             "issues" => convertor_of!(IssuesEvent),
             "issues_comment" => convertor_of!(IssueCommentEvent),
             "pull_request" => convertor_of!(PullRequestEvent),
@@ -65,6 +67,16 @@ impl Payload {
 pub struct CheckRunEvent {
     action: String,
     check_run: CheckRun,
+    repository: Repository,
+    installation: Option<Installation>,
+    sender: Actor,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct CheckSuiteEvent {
+    action: String,
+    check_suite: CheckSuite,
     repository: Repository,
     installation: Option<Installation>,
     sender: Actor,
