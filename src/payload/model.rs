@@ -373,3 +373,92 @@ pub struct Review {
     pull_request_url: String,
     _links: ReviewLinks,
 }
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct CheckRun {
+    id: i64,
+    node_id: Option<String>,
+    name: String,
+    head_sha: String,
+    status: String,
+    conclusion: Option<String>,
+    url: String,
+    html_url: String,
+    started_at: String,
+    completed_at: Option<String>,
+    output: CheckRunOutput,
+    check_suite: CheckSuite,
+    app: App,
+    pull_requests: Vec<CheckRunPullRequest>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct CheckRunOutput {
+    title: Option<String>,
+    summary: Option<String>,
+    text: Option<String>,
+    annotations_count: i64,
+    annotations_url: String,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct CheckSuite {
+    id: i64,
+    head_branch: String,
+    head_sha: String,
+    status: String,
+    conclusion: Option<String>,
+    url: String,
+    before: String,
+    after: String,
+    pull_requests: Vec<CheckRunPullRequest>,
+    app: App,
+    #[serde(with = "time::serde::rfc3339")]
+    created_at: OffsetDateTime,
+    #[serde(with = "time::serde::rfc3339")]
+    updated_at: OffsetDateTime,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct App {
+    id: i64,
+    node_id: String,
+    owner: Actor,
+    name: String,
+    description: Option<String>,
+    external_url: String,
+    html_url: String,
+    created_at: String,
+    updated_at: String,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct CheckRunPullRequest {
+    id: i64,
+    url: String,
+    number: i64,
+    head: CheckRunPullRequestRef,
+    base: CheckRunPullRequestRef,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct CheckRunPullRequestRef {
+    #[serde(alias = "ref")]
+    refer: String,
+    sha: String,
+    repo: RepoRef,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct RepoRef {
+    id: i64,
+    url: String,
+    name: String,
+}

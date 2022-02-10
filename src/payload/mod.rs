@@ -29,6 +29,7 @@ pub enum Payload {
     PullRequestReviewEvent(Box<PullRequestReviewEvent>),
     PullRequestReviewCommentEvent(Box<PullRequestReviewCommentEvent>),
     StarEvent(Box<StarEvent>),
+    CheckRunEvent(Box<CheckRunEvent>),
 }
 
 type Convertor = for<'a> fn(&'a [u8]) -> SerdeJsonResult<Payload>;
@@ -47,6 +48,7 @@ macro_rules! convertor_of {
 impl Payload {
     pub fn convertor(event: &str) -> Option<Convertor> {
         match event {
+            "check_run" => convertor_of!(CheckRunEvent),
             "issues" => convertor_of!(IssuesEvent),
             "issues_comment" => convertor_of!(IssueCommentEvent),
             "pull_request" => convertor_of!(PullRequestEvent),
@@ -56,6 +58,16 @@ impl Payload {
             _ => None,
         }
     }
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct CheckRunEvent {
+    action: String,
+    check_run: CheckRun,
+    repository: Repository,
+    installation: Option<Installation>,
+    sender: Actor,
 }
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
