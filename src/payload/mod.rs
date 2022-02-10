@@ -27,6 +27,7 @@ pub enum Payload {
     CheckSuiteEvent(Box<CheckSuiteEvent>),
     CommitCommentEvent(Box<CommitCommentEvent>),
     CreateEvent(Box<CreateEvent>),
+    DeleteEvent(Box<DeleteEvent>),
     IssuesEvent(Box<IssuesEvent>),
     IssueCommentEvent(Box<IssueCommentEvent>),
     PullRequestEvent(Box<PullRequestEvent>),
@@ -55,6 +56,7 @@ impl Payload {
             "check_suite" => convertor_of!(CheckSuiteEvent),
             "commit_comment" => convertor_of!(CommitCommentEvent),
             "create" => convertor_of!(CreateEvent),
+            "delete" => convertor_of!(DeleteEvent),
             "issues" => convertor_of!(IssuesEvent),
             "issues_comment" => convertor_of!(IssueCommentEvent),
             "pull_request" => convertor_of!(PullRequestEvent),
@@ -103,6 +105,17 @@ pub struct CreateEvent {
     ref_type: String,
     master_branch: String,
     description: Option<String>,
+    pusher_type: String,
+    repository: Repository,
+    sender: Actor,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct DeleteEvent {
+    #[serde(alias = "ref")]
+    refer: String,
+    ref_type: String,
     pusher_type: String,
     repository: Repository,
     sender: Actor,
