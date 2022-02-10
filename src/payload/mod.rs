@@ -25,6 +25,7 @@ pub mod model;
 pub enum Payload {
     CheckRunEvent(Box<CheckRunEvent>),
     CheckSuiteEvent(Box<CheckSuiteEvent>),
+    CommitCommentEvent(Box<CommitCommentEvent>),
     IssuesEvent(Box<IssuesEvent>),
     IssueCommentEvent(Box<IssueCommentEvent>),
     PullRequestEvent(Box<PullRequestEvent>),
@@ -51,6 +52,7 @@ impl Payload {
         match event {
             "check_run" => convertor_of!(CheckRunEvent),
             "check_suite" => convertor_of!(CheckSuiteEvent),
+            "commit_comment" => convertor_of!(CommitCommentEvent),
             "issues" => convertor_of!(IssuesEvent),
             "issues_comment" => convertor_of!(IssueCommentEvent),
             "pull_request" => convertor_of!(PullRequestEvent),
@@ -79,6 +81,15 @@ pub struct CheckSuiteEvent {
     check_suite: CheckSuite,
     repository: Repository,
     installation: Option<Installation>,
+    sender: Actor,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct CommitCommentEvent {
+    action: String,
+    comment: CommitComment,
+    repository: Repository,
     sender: Actor,
 }
 
