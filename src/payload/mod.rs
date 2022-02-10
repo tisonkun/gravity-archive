@@ -31,6 +31,7 @@ pub enum Payload {
     GollumEvent(Box<GollumEvent>),
     IssuesEvent(Box<IssuesEvent>),
     IssueCommentEvent(Box<IssueCommentEvent>),
+    LabelEvent(Box<LabelEvent>),
     PullRequestEvent(Box<PullRequestEvent>),
     PullRequestReviewEvent(Box<PullRequestReviewEvent>),
     PullRequestReviewCommentEvent(Box<PullRequestReviewCommentEvent>),
@@ -61,6 +62,7 @@ impl Payload {
             "gollum" => convertor_of!(GollumEvent),
             "issues" => convertor_of!(IssuesEvent),
             "issues_comment" => convertor_of!(IssueCommentEvent),
+            "label" => convertor_of!(LabelEvent),
             "pull_request" => convertor_of!(PullRequestEvent),
             "pull_request_review" => convertor_of!(PullRequestReviewEvent),
             "pull_request_review_comment" => convertor_of!(PullRequestReviewCommentEvent),
@@ -136,7 +138,7 @@ pub struct GollumEvent {
 pub struct IssuesEvent {
     action: String,
     issue: Issue,
-    changes: Option<Changes>,
+    changes: Option<IssueChanges>,
     repository: Repository,
     sender: Actor,
 }
@@ -147,8 +149,19 @@ pub struct IssueCommentEvent {
     action: String,
     issue: Issue,
     comment: IssueComment,
-    changes: Option<Changes>,
+    changes: Option<IssueChanges>,
     repository: Repository,
+    sender: Actor,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct LabelEvent {
+    action: String,
+    label: Label,
+    changes: Option<LabelChanges>,
+    repository: Repository,
+    organization: Option<Organization>,
     sender: Actor,
 }
 
@@ -161,7 +174,7 @@ pub struct PullRequestEvent {
     label: Option<Label>,
     repository: Repository,
     sender: Actor,
-    changes: Option<Changes>,
+    changes: Option<IssueChanges>,
     assignee: Option<Actor>,
     requested_reviewer: Option<Actor>,
     requested_team: Option<Team>,
