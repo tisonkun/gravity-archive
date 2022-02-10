@@ -482,3 +482,14 @@ pub struct RepoRef {
     url: String,
     name: String,
 }
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct Page {
+    page_name: String,
+    title: String,
+    summary: Option<String>,
+    action: String,
+    sha: String,
+    html_url: String,
+}
