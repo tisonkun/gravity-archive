@@ -225,6 +225,26 @@ pub struct PullRequestReviewComment {
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
 #[get = "pub"]
+pub struct CommitComment {
+    url: String,
+    html_url: String,
+    id: i64,
+    node_id: String,
+    user: Actor,
+    #[serde(with = "time::serde::rfc3339")]
+    created_at: OffsetDateTime,
+    #[serde(with = "time::serde::rfc3339")]
+    updated_at: OffsetDateTime,
+    body: String,
+    author_association: String,
+    position: Option<i64>,
+    line: Option<i64>,
+    path: Option<String>,
+    commit_id: String,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
 pub struct Changes {
     title: Option<ChangedFrom>,
     body: Option<ChangedFrom>,
