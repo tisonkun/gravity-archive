@@ -245,7 +245,14 @@ pub struct CommitComment {
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
 #[get = "pub"]
-pub struct Changes {
+pub struct LabelChanges {
+    name: Option<ChangedFrom>,
+    color: Option<ChangedFrom>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct IssueChanges {
     title: Option<ChangedFrom>,
     body: Option<ChangedFrom>,
 }
@@ -492,4 +499,21 @@ pub struct Page {
     action: String,
     sha: String,
     html_url: String,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct Organization {
+    login: String,
+    id: i64,
+    node_id: String,
+    url: String,
+    repos_url: String,
+    events_url: String,
+    hooks_url: String,
+    issues_url: String,
+    members_url: String,
+    public_members_url: String,
+    avatar_url: String,
+    description: String,
 }
