@@ -164,8 +164,8 @@ pub struct Milestone {
     created_at: OffsetDateTime,
     #[serde(with = "time::serde::rfc3339")]
     updated_at: OffsetDateTime,
-    #[serde(with = "time::serde::rfc3339")]
-    closed_at: OffsetDateTime,
+    #[serde(with = "super::option_time_rfc3339")]
+    closed_at: Option<OffsetDateTime>,
     #[serde(with = "time::serde::rfc3339")]
     due_on: OffsetDateTime,
 }
