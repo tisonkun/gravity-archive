@@ -39,6 +39,7 @@ pub enum Payload {
     PullRequestReviewCommentEvent(Box<PullRequestReviewCommentEvent>),
     RepositoryEvent(Box<RepositoryEvent>),
     StarEvent(Box<StarEvent>),
+    TeamAddEvent(Box<TeamAddEvent>),
 }
 
 type Convertor = for<'a> fn(&'a [u8]) -> SerdeJsonResult<Payload>;
@@ -73,6 +74,7 @@ impl Payload {
             "pull_request_review_comment" => convertor_of!(PullRequestReviewCommentEvent),
             "repository" => convertor_of!(RepositoryEvent),
             "star" => convertor_of!(StarEvent),
+            "team_add" => convertor_of!(TeamAddEvent),
             _ => None,
         }
     }
@@ -242,6 +244,15 @@ pub struct StarEvent {
     #[serde(with = "option_time_rfc3339")]
     starred_at: Option<OffsetDateTime>,
     repository: Repository,
+    sender: Actor,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct TeamAddEvent {
+    team: Team,
+    repository: Repository,
+    organization: Organization,
     sender: Actor,
 }
 
