@@ -30,6 +30,7 @@ pub enum Payload {
     DeleteEvent(Box<DeleteEvent>),
     DeployKeyEvent(Box<DeployKeyEvent>),
     DeploymentEvent(Box<DeploymentEvent>),
+    DeploymentStatusEvent(Box<DeploymentStatusEvent>),
     GollumEvent(Box<GollumEvent>),
     IssuesEvent(Box<IssuesEvent>),
     IssueCommentEvent(Box<IssueCommentEvent>),
@@ -69,6 +70,7 @@ impl Payload {
             "delete" => convertor_of!(DeleteEvent),
             "deploy_key" => convertor_of!(DeployKeyEvent),
             "deployment" => convertor_of!(DeploymentEvent),
+            "deployment_status" => convertor_of!(DeploymentStatusEvent),
             "gollum" => convertor_of!(GollumEvent),
             "issues" => convertor_of!(IssuesEvent),
             "issues_comment" => convertor_of!(IssueCommentEvent),
@@ -153,6 +155,15 @@ pub struct DeployKeyEvent {
 #[derive(Deserialize, Serialize, Debug, Getters)]
 #[get = "pub"]
 pub struct DeploymentEvent {
+    deployment: Deployment,
+    repository: Repository,
+    sender: Actor,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct DeploymentStatusEvent {
+    deployment_status: DeploymentStatus,
     deployment: Deployment,
     repository: Repository,
     sender: Actor,

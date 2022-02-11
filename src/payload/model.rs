@@ -556,3 +556,24 @@ pub struct Deployment {
     statuses_url: String,
     repository_url: String,
 }
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct DeploymentStatus {
+    url: String,
+    id: i64,
+    node_id: String,
+    state: String,
+    creator: Actor,
+    #[serde(with = "time::serde::rfc3339")]
+    created_at: OffsetDateTime,
+    #[serde(with = "time::serde::rfc3339")]
+    updated_at: OffsetDateTime,
+    description: String,
+    environment: String,
+    environment_url: Option<String>,
+    log_url: Option<String>,
+    target_url: String,
+    deployment_url: String,
+    repository_url: String,
+}
