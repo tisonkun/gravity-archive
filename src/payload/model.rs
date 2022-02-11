@@ -517,3 +517,16 @@ pub struct Organization {
     avatar_url: String,
     description: String,
 }
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct DeployKey {
+    id: i64,
+    key: String,
+    url: String,
+    title: String,
+    verified: bool,
+    #[serde(with = "time::serde::rfc3339")]
+    created_at: OffsetDateTime,
+    read_only: bool,
+}
