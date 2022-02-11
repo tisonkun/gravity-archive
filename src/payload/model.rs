@@ -14,6 +14,7 @@
 
 use getset::Getters;
 use serde::{Deserialize, Serialize};
+use serde_json::{Map, Value};
 use time::OffsetDateTime;
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
@@ -529,4 +530,29 @@ pub struct DeployKey {
     #[serde(with = "time::serde::rfc3339")]
     created_at: OffsetDateTime,
     read_only: bool,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct Deployment {
+    url: String,
+    id: i64,
+    node_id: String,
+    sha: String,
+    #[serde(alias = "ref")]
+    refer: String,
+    task: String,
+    payload: Map<String, Value>,
+    original_environment: String,
+    environment: String,
+    transient_environment: Option<bool>,
+    production_environment: Option<bool>,
+    description: Option<String>,
+    creator: Actor,
+    #[serde(with = "time::serde::rfc3339")]
+    created_at: OffsetDateTime,
+    #[serde(with = "time::serde::rfc3339")]
+    updated_at: OffsetDateTime,
+    statuses_url: String,
+    repository_url: String,
 }
