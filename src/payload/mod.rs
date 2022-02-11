@@ -46,6 +46,7 @@ pub enum Payload {
     OrgBlockEvent(Box<OrgBlockEvent>),
     PageBuildEvent(Box<PageBuildEvent>),
     PingEvent(Box<PingEvent>),
+    ProjectCardEvent(Box<ProjectCardEvent>),
     PublicEvent(Box<PublicEvent>),
     PullRequestEvent(Box<PullRequestEvent>),
     PullRequestReviewEvent(Box<PullRequestReviewEvent>),
@@ -96,6 +97,7 @@ impl Payload {
             "org_block" => convertor_of!(OrgBlockEvent),
             "page_build" => convertor_of!(PageBuildEvent),
             "ping" => convertor_of!(PingEvent),
+            "project_card" => convertor_of!(ProjectCardEvent),
             "public" => convertor_of!(PublicEvent),
             "pull_request" => convertor_of!(PullRequestEvent),
             "pull_request_review" => convertor_of!(PullRequestReviewEvent),
@@ -332,6 +334,17 @@ pub struct PingEvent {
     zen: String,
     hook_id: i64,
     hook: Hook,
+    repository: Option<Repository>,
+    organization: Option<Organization>,
+    sender: Actor,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct ProjectCardEvent {
+    action: String,
+    changes: Option<ProjectCardChanges>,
+    project_card: ProjectCard,
     repository: Option<Repository>,
     organization: Option<Organization>,
     sender: Actor,
