@@ -269,15 +269,16 @@ pub struct ChangedFrom {
 pub struct Team {
     name: String,
     id: i64,
-    node_id: String,
-    slug: String,
+    node_id: Option<String>,
+    deleted: Option<bool>,
+    slug: Option<String>,
     description: Option<String>,
-    privacy: String,
-    url: String,
-    html_url: String,
-    members_url: String,
-    repositories_url: String,
-    permission: String,
+    privacy: Option<String>,
+    url: Option<String>,
+    html_url: Option<String>,
+    members_url: Option<String>,
+    repositories_url: Option<String>,
+    permission: Option<String>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
