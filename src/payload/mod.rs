@@ -33,6 +33,7 @@ pub enum Payload {
     DeploymentStatusEvent(Box<DeploymentStatusEvent>),
     ForkEvent(Box<ForkEvent>),
     GollumEvent(Box<GollumEvent>),
+    InstallationEvent(Box<InstallationEvent>),
     IssuesEvent(Box<IssuesEvent>),
     IssueCommentEvent(Box<IssueCommentEvent>),
     LabelEvent(Box<LabelEvent>),
@@ -74,6 +75,7 @@ impl Payload {
             "deployment_status" => convertor_of!(DeploymentStatusEvent),
             "fork" => convertor_of!(ForkEvent),
             "gollum" => convertor_of!(GollumEvent),
+            "installation" => convertor_of!(InstallationEvent),
             "issues" => convertor_of!(IssuesEvent),
             "issues_comment" => convertor_of!(IssueCommentEvent),
             "label" => convertor_of!(LabelEvent),
@@ -98,7 +100,7 @@ pub struct CheckRunEvent {
     action: String,
     check_run: CheckRun,
     repository: Repository,
-    installation: Option<Installation>,
+    installation: Option<InstallationId>,
     sender: Actor,
 }
 
@@ -108,7 +110,7 @@ pub struct CheckSuiteEvent {
     action: String,
     check_suite: CheckSuite,
     repository: Repository,
-    installation: Option<Installation>,
+    installation: Option<InstallationId>,
     sender: Actor,
 }
 
@@ -189,6 +191,15 @@ pub struct GollumEvent {
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
 #[get = "pub"]
+pub struct InstallationEvent {
+    action: String,
+    installation: Installation,
+    repositories: Option<Vec<InstallationRepository>>,
+    sender: Actor,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
 pub struct IssuesEvent {
     action: String,
     issue: Issue,
@@ -249,7 +260,7 @@ pub struct PullRequestEvent {
     assignee: Option<Actor>,
     requested_reviewer: Option<Actor>,
     requested_team: Option<Team>,
-    installation: Option<Installation>,
+    installation: Option<InstallationId>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
@@ -260,7 +271,7 @@ pub struct PullRequestReviewEvent {
     pull_request: PullRequest,
     repository: Repository,
     sender: Actor,
-    installation: Installation,
+    installation: InstallationId,
 }
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
@@ -271,7 +282,7 @@ pub struct PullRequestReviewCommentEvent {
     pull_request: PullRequest,
     repository: Repository,
     sender: Actor,
-    installation: Installation,
+    installation: InstallationId,
 }
 
 #[derive(Deserialize, Serialize, Debug, Getters)]

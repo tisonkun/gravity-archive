@@ -282,7 +282,7 @@ pub struct Team {
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
 #[get = "pub"]
-pub struct Installation {
+pub struct InstallationId {
     id: i64,
     node_id: String,
 }
@@ -576,4 +576,71 @@ pub struct DeploymentStatus {
     target_url: String,
     deployment_url: String,
     repository_url: String,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct Installation {
+    id: i64,
+    account: Actor,
+    repository_selection: String,
+    access_tokens_url: String,
+    repositories_url: String,
+    html_url: String,
+    app_id: i64,
+    target_id: i64,
+    target_type: String,
+    permissions: InstallationPermissions,
+    events: Vec<String>,
+    single_file_name: Option<String>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct InstallationPermissions {
+    actions: Option<String>,
+    administration: Option<String>,
+    checks: Option<String>,
+    content_references: Option<String>,
+    contents: Option<String>,
+    deployments: Option<String>,
+    discussions: Option<String>,
+    emails: Option<String>,
+    environments: Option<String>,
+    issues: Option<String>,
+    members: Option<String>,
+    metadata: Option<String>,
+    organization_administration: Option<String>,
+    organization_events: Option<String>,
+    organization_hooks: Option<String>,
+    organization_packages: Option<String>,
+    organization_plan: Option<String>,
+    organization_projects: Option<String>,
+    organization_secrets: Option<String>,
+    organization_self_hosted_runners: Option<String>,
+    organization_user_blocking: Option<String>,
+    packages: Option<String>,
+    pages: Option<String>,
+    pull_requests: Option<String>,
+    repository_hooks: Option<String>,
+    repository_projects: Option<String>,
+    secret_scanning_alerts: Option<String>,
+    secrets: Option<String>,
+    security_events: Option<String>,
+    security_scanning_alert: Option<String>,
+    single_file: Option<String>,
+    statuses: Option<String>,
+    team_discussions: Option<String>,
+    vulnerability_alerts: Option<String>,
+    workflows: Option<String>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct InstallationRepository {
+    id: i64,
+    node_id: String,
+    name: String,
+    full_name: String,
+    private: bool,
 }
