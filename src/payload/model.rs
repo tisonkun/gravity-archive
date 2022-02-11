@@ -693,3 +693,24 @@ pub struct Membership {
     organization_url: String,
     user: Actor,
 }
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct PageBuild {
+    url: String,
+    status: String,
+    duration: i64,
+    commit: String,
+    pusher: Actor,
+    #[serde(with = "time::serde::rfc3339")]
+    created_at: OffsetDateTime,
+    #[serde(with = "time::serde::rfc3339")]
+    updated_at: OffsetDateTime,
+    error: PageBuildError,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct PageBuildError {
+    message: Option<String>,
+}
