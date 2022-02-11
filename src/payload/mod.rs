@@ -28,6 +28,7 @@ pub enum Payload {
     CommitCommentEvent(Box<CommitCommentEvent>),
     CreateEvent(Box<CreateEvent>),
     DeleteEvent(Box<DeleteEvent>),
+    DeployKeyEvent(Box<DeployKeyEvent>),
     GollumEvent(Box<GollumEvent>),
     IssuesEvent(Box<IssuesEvent>),
     IssueCommentEvent(Box<IssueCommentEvent>),
@@ -65,6 +66,7 @@ impl Payload {
             "commit_comment" => convertor_of!(CommitCommentEvent),
             "create" => convertor_of!(CreateEvent),
             "delete" => convertor_of!(DeleteEvent),
+            "deploy_key" => convertor_of!(DeployKeyEvent),
             "gollum" => convertor_of!(GollumEvent),
             "issues" => convertor_of!(IssuesEvent),
             "issues_comment" => convertor_of!(IssueCommentEvent),
@@ -133,6 +135,15 @@ pub struct DeleteEvent {
     refer: String,
     ref_type: String,
     pusher_type: String,
+    repository: Repository,
+    sender: Actor,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct DeployKeyEvent {
+    action: String,
+    key: DeployKey,
     repository: Repository,
     sender: Actor,
 }
