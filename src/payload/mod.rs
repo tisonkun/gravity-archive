@@ -48,6 +48,7 @@ pub enum Payload {
     PingEvent(Box<PingEvent>),
     ProjectCardEvent(Box<ProjectCardEvent>),
     ProjectColumnEvent(Box<ProjectColumnEvent>),
+    ProjectEvent(Box<ProjectEvent>),
     PublicEvent(Box<PublicEvent>),
     PullRequestEvent(Box<PullRequestEvent>),
     PullRequestReviewEvent(Box<PullRequestReviewEvent>),
@@ -98,6 +99,7 @@ impl Payload {
             "org_block" => convertor_of!(OrgBlockEvent),
             "page_build" => convertor_of!(PageBuildEvent),
             "ping" => convertor_of!(PingEvent),
+            "project" => convertor_of!(ProjectEvent),
             "project_card" => convertor_of!(ProjectCardEvent),
             "project_column" => convertor_of!(ProjectColumnEvent),
             "public" => convertor_of!(PublicEvent),
@@ -359,6 +361,17 @@ pub struct ProjectColumnEvent {
     changes: Option<ProjectColumnChanges>,
     project_column: ProjectColumn,
     repository: Option<Repository>,
+    organization: Option<Organization>,
+    sender: Actor,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct ProjectEvent {
+    action: String,
+    changes: Option<ProjectChanges>,
+    project: Project,
+    repository: Repository,
     organization: Option<Organization>,
     sender: Actor,
 }

@@ -736,6 +736,13 @@ pub struct ProjectColumnChanges {
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
 #[get = "pub"]
+pub struct ProjectChanges {
+    name: Option<ChangedFrom>,
+    body: Option<ChangedFrom>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
 pub struct ProjectCard {
     url: String,
     project_url: String,
@@ -763,6 +770,26 @@ pub struct ProjectColumn {
     id: i64,
     node_id: String,
     name: String,
+    #[serde(with = "time::serde::rfc3339")]
+    created_at: OffsetDateTime,
+    #[serde(with = "time::serde::rfc3339")]
+    updated_at: OffsetDateTime,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct Project {
+    owner_url: String,
+    url: String,
+    html_url: String,
+    columns_url: String,
+    id: i64,
+    node_id: String,
+    name: String,
+    body: Option<String>,
+    number: i64,
+    state: String,
+    creator: Actor,
     #[serde(with = "time::serde::rfc3339")]
     created_at: OffsetDateTime,
     #[serde(with = "time::serde::rfc3339")]
