@@ -53,6 +53,7 @@ pub enum Payload {
     PullRequestEvent(Box<PullRequestEvent>),
     PullRequestReviewEvent(Box<PullRequestReviewEvent>),
     PullRequestReviewCommentEvent(Box<PullRequestReviewCommentEvent>),
+    PushEvent(Box<PushEvent>),
     RepositoryEvent(Box<RepositoryEvent>),
     StarEvent(Box<StarEvent>),
     TeamAddEvent(Box<TeamAddEvent>),
@@ -106,6 +107,7 @@ impl Payload {
             "pull_request" => convertor_of!(PullRequestEvent),
             "pull_request_review" => convertor_of!(PullRequestReviewEvent),
             "pull_request_review_comment" => convertor_of!(PullRequestReviewCommentEvent),
+            "push" => convertor_of!(PushEvent),
             "repository" => convertor_of!(RepositoryEvent),
             "star" => convertor_of!(StarEvent),
             "team" => convertor_of!(TeamEvent),
@@ -423,6 +425,25 @@ pub struct PullRequestReviewCommentEvent {
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
 #[get = "pub"]
+pub struct PushEvent {
+    #[serde(alias = "ref")]
+    refer: String,
+    before: String,
+    after: String,
+    created: bool,
+    deleted: bool,
+    forced: bool,
+    base_ref: Option<String>,
+    compare: String,
+    repository: Repository,
+    pusher: Pusher,
+    sender: Actor,
+    commits: Vec<Commit>,
+    head_commit: Option<Commit>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
 pub struct RepositoryEvent {
     action: String,
     repository: Repository,
@@ -434,7 +455,7 @@ pub struct RepositoryEvent {
 #[get = "pub"]
 pub struct StarEvent {
     action: String,
-    #[serde(with = "option_time_rfc3339")]
+    #[serde(with = "model::option_time_number_or_string")]
     starred_at: Option<OffsetDateTime>,
     repository: Repository,
     sender: Actor,
@@ -464,31 +485,4 @@ pub struct WatchEvent {
     action: String,
     repository: Repository,
     sender: Actor,
-}
-
-// This trick is originally provided by @dtolnay at:
-// https://github.com/serde-rs/serde/issues/1301#issuecomment-394108486
-/// A helper module to workaround serde with customize functions for `Option`
-/// value.
-pub(self) mod option_time_rfc3339 {
-    use serde::{Deserialize, Deserializer, Serialize, Serializer};
-    use time::OffsetDateTime;
-
-    pub fn serialize<S: Serializer>(
-        value: &Option<OffsetDateTime>,
-        serializer: S,
-    ) -> Result<S::Ok, S::Error> {
-        #[derive(Serialize)]
-        struct Wrapper<'a>(#[serde(with = "time::serde::rfc3339")] &'a OffsetDateTime);
-        value.as_ref().map(Wrapper).serialize(serializer)
-    }
-
-    pub fn deserialize<'de, D: Deserializer<'de>>(
-        deserializer: D,
-    ) -> Result<Option<OffsetDateTime>, D::Error> {
-        #[derive(Deserialize)]
-        struct Wrapper(#[serde(with = "time::serde::rfc3339")] OffsetDateTime);
-        let wrapper = Option::deserialize(deserializer)?;
-        Ok(wrapper.map(|Wrapper(datetime)| datetime))
-    }
 }
