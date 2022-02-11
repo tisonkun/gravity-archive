@@ -40,6 +40,7 @@ pub enum Payload {
     RepositoryEvent(Box<RepositoryEvent>),
     StarEvent(Box<StarEvent>),
     TeamAddEvent(Box<TeamAddEvent>),
+    TeamEvent(Box<TeamEvent>),
 }
 
 type Convertor = for<'a> fn(&'a [u8]) -> SerdeJsonResult<Payload>;
@@ -74,6 +75,7 @@ impl Payload {
             "pull_request_review_comment" => convertor_of!(PullRequestReviewCommentEvent),
             "repository" => convertor_of!(RepositoryEvent),
             "star" => convertor_of!(StarEvent),
+            "team" => convertor_of!(TeamEvent),
             "team_add" => convertor_of!(TeamAddEvent),
             _ => None,
         }
@@ -252,6 +254,15 @@ pub struct StarEvent {
 pub struct TeamAddEvent {
     team: Team,
     repository: Repository,
+    organization: Organization,
+    sender: Actor,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct TeamEvent {
+    action: String,
+    team: Team,
     organization: Organization,
     sender: Actor,
 }
