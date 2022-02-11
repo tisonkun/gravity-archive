@@ -37,6 +37,7 @@ pub enum Payload {
     PullRequestEvent(Box<PullRequestEvent>),
     PullRequestReviewEvent(Box<PullRequestReviewEvent>),
     PullRequestReviewCommentEvent(Box<PullRequestReviewCommentEvent>),
+    RepositoryEvent(Box<RepositoryEvent>),
     StarEvent(Box<StarEvent>),
 }
 
@@ -70,6 +71,7 @@ impl Payload {
             "pull_request" => convertor_of!(PullRequestEvent),
             "pull_request_review" => convertor_of!(PullRequestReviewEvent),
             "pull_request_review_comment" => convertor_of!(PullRequestReviewCommentEvent),
+            "repository" => convertor_of!(RepositoryEvent),
             "star" => convertor_of!(StarEvent),
             _ => None,
         }
@@ -222,6 +224,15 @@ pub struct PullRequestReviewCommentEvent {
     repository: Repository,
     sender: Actor,
     installation: Installation,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct RepositoryEvent {
+    action: String,
+    repository: Repository,
+    organization: Option<Organization>,
+    sender: Actor,
 }
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
