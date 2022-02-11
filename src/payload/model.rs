@@ -670,3 +670,26 @@ pub struct HookConfig {
     url: String,
     secret: String,
 }
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct Invitation {
+    id: i64,
+    node_id: String,
+    login: String,
+    email: Option<String>,
+    role: String,
+    inviter: Actor,
+    team_count: i64,
+    invitation_teams_url: String,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct Membership {
+    url: String,
+    state: String,
+    role: String,
+    organization_url: String,
+    user: Actor,
+}
