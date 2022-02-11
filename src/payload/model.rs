@@ -645,3 +645,28 @@ pub struct InstallationRepository {
     full_name: String,
     private: bool,
 }
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct Hook {
+    id: i64,
+    #[serde(alias = "type")]
+    typ: String,
+    name: String,
+    active: bool,
+    #[serde(with = "time::serde::rfc3339")]
+    created_at: OffsetDateTime,
+    #[serde(with = "time::serde::rfc3339")]
+    updated_at: OffsetDateTime,
+    events: Vec<String>,
+    config: HookConfig,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct HookConfig {
+    content_type: String,
+    insecure_ssl: String,
+    url: String,
+    secret: String,
+}
