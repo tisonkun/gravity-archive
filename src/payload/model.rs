@@ -270,7 +270,7 @@ pub struct Team {
     id: i64,
     node_id: String,
     slug: String,
-    description: String,
+    description: Option<String>,
     privacy: String,
     url: String,
     html_url: String,
