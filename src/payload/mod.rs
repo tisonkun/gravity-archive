@@ -43,6 +43,7 @@ pub enum Payload {
     MetaEvent(Box<MetaEvent>),
     MilestoneEvent(Box<MilestoneEvent>),
     OrganizationEvent(Box<OrganizationEvent>),
+    OrgBlockEvent(Box<OrgBlockEvent>),
     PublicEvent(Box<PublicEvent>),
     PullRequestEvent(Box<PullRequestEvent>),
     PullRequestReviewEvent(Box<PullRequestReviewEvent>),
@@ -90,6 +91,7 @@ impl Payload {
             "meta" => convertor_of!(MetaEvent),
             "milestone" => convertor_of!(MilestoneEvent),
             "organization" => convertor_of!(OrganizationEvent),
+            "org_block" => convertor_of!(OrgBlockEvent),
             "public" => convertor_of!(PublicEvent),
             "pull_request" => convertor_of!(PullRequestEvent),
             "pull_request_review" => convertor_of!(PullRequestReviewEvent),
@@ -297,7 +299,16 @@ pub struct OrganizationEvent {
     action: String,
     membership: Option<Membership>,
     invitation: Option<Invitation>,
-    organization: Option<Organization>,
+    organization: Organization,
+    sender: Actor,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct OrgBlockEvent {
+    action: String,
+    blocked_user: Actor,
+    organization: Organization,
     sender: Actor,
 }
 
