@@ -34,6 +34,7 @@ pub enum Payload {
     ForkEvent(Box<ForkEvent>),
     GollumEvent(Box<GollumEvent>),
     InstallationEvent(Box<InstallationEvent>),
+    InstallationRepositoriesEvent(Box<InstallationRepositoriesEvent>),
     IssuesEvent(Box<IssuesEvent>),
     IssueCommentEvent(Box<IssueCommentEvent>),
     LabelEvent(Box<LabelEvent>),
@@ -76,6 +77,7 @@ impl Payload {
             "fork" => convertor_of!(ForkEvent),
             "gollum" => convertor_of!(GollumEvent),
             "installation" => convertor_of!(InstallationEvent),
+            "installation_repositories" => convertor_of!(InstallationRepositoriesEvent),
             "issues" => convertor_of!(IssuesEvent),
             "issues_comment" => convertor_of!(IssueCommentEvent),
             "label" => convertor_of!(LabelEvent),
@@ -195,6 +197,17 @@ pub struct InstallationEvent {
     action: String,
     installation: Installation,
     repositories: Option<Vec<InstallationRepository>>,
+    sender: Actor,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct InstallationRepositoriesEvent {
+    action: String,
+    installation: Installation,
+    repositories_added: Vec<InstallationRepository>,
+    repositories_removed: Vec<InstallationRepository>,
+    requester: Option<Actor>,
     sender: Actor,
 }
 
