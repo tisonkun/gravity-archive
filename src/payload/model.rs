@@ -266,6 +266,12 @@ pub struct ChangedFrom {
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
 #[get = "pub"]
+pub struct ChangedFromNumber {
+    from: i64,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
 pub struct Team {
     name: String,
     id: i64,
@@ -713,4 +719,31 @@ pub struct PageBuild {
 #[get = "pub"]
 pub struct PageBuildError {
     message: Option<String>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct ProjectCardChanges {
+    note: Option<ChangedFrom>,
+    column_id: Option<ChangedFromNumber>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct ProjectCard {
+    url: String,
+    project_url: String,
+    column_url: String,
+    column_id: i64,
+    id: i64,
+    node_id: String,
+    node: Option<String>,
+    archived: bool,
+    creator: Actor,
+    #[serde(with = "time::serde::rfc3339")]
+    created_at: OffsetDateTime,
+    #[serde(with = "time::serde::rfc3339")]
+    updated_at: OffsetDateTime,
+    content_url: Option<String>,
+    after_id: Option<String>,
 }
