@@ -730,6 +730,12 @@ pub struct ProjectCardChanges {
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
 #[get = "pub"]
+pub struct ProjectColumnChanges {
+    name: Option<ChangedFrom>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
 pub struct ProjectCard {
     url: String,
     project_url: String,
@@ -746,4 +752,19 @@ pub struct ProjectCard {
     updated_at: OffsetDateTime,
     content_url: Option<String>,
     after_id: Option<String>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct ProjectColumn {
+    url: String,
+    project_url: String,
+    cards_url: String,
+    id: i64,
+    node_id: String,
+    name: String,
+    #[serde(with = "time::serde::rfc3339")]
+    created_at: OffsetDateTime,
+    #[serde(with = "time::serde::rfc3339")]
+    updated_at: OffsetDateTime,
 }
