@@ -668,7 +668,7 @@ pub struct HookConfig {
     content_type: String,
     insecure_ssl: String,
     url: String,
-    secret: String,
+    secret: Option<String>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
