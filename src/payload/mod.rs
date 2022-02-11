@@ -38,6 +38,7 @@ pub enum Payload {
     IssuesEvent(Box<IssuesEvent>),
     IssueCommentEvent(Box<IssueCommentEvent>),
     LabelEvent(Box<LabelEvent>),
+    MemberEvent(Box<MemberEvent>),
     MilestoneEvent(Box<MilestoneEvent>),
     PublicEvent(Box<PublicEvent>),
     PullRequestEvent(Box<PullRequestEvent>),
@@ -81,6 +82,7 @@ impl Payload {
             "issues" => convertor_of!(IssuesEvent),
             "issues_comment" => convertor_of!(IssueCommentEvent),
             "label" => convertor_of!(LabelEvent),
+            "member" => convertor_of!(MemberEvent),
             "milestone" => convertor_of!(MilestoneEvent),
             "public" => convertor_of!(PublicEvent),
             "pull_request" => convertor_of!(PullRequestEvent),
@@ -240,6 +242,15 @@ pub struct LabelEvent {
     changes: Option<LabelChanges>,
     repository: Repository,
     organization: Option<Organization>,
+    sender: Actor,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct MemberEvent {
+    action: String,
+    member: Actor,
+    repository: Repository,
     sender: Actor,
 }
 
