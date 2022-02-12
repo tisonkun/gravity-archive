@@ -65,6 +65,7 @@ pub enum Payload {
     WatchEvent(Box<WatchEvent>),
     WorkflowDispatchEvent(Box<WorkflowDispatchEvent>),
     WorkflowJobEvent(Box<WorkflowJobEvent>),
+    WorkflowRunEvent(Box<WorkflowRunEvent>),
 }
 
 type Convertor = for<'a> fn(&'a [u8]) -> SerdeJsonResult<Payload>;
@@ -124,6 +125,7 @@ impl Payload {
             "watch" => convertor_of!(WatchEvent),
             "workflow_dispatch" => convertor_of!(WorkflowDispatchEvent),
             "workflow_job" => convertor_of!(WorkflowJobEvent),
+            "workflow_run" => convertor_of!(WorkflowRunEvent),
             _ => None,
         }
     }
@@ -135,7 +137,7 @@ pub struct CheckRunEvent {
     action: String,
     check_run: CheckRun,
     repository: Repository,
-    installation: Option<InstallationId>,
+    installation: Option<InstallationLite>,
     sender: Actor,
 }
 
@@ -145,7 +147,7 @@ pub struct CheckSuiteEvent {
     action: String,
     check_suite: CheckSuite,
     repository: Repository,
-    installation: Option<InstallationId>,
+    installation: Option<InstallationLite>,
     sender: Actor,
 }
 
@@ -409,7 +411,7 @@ pub struct PullRequestEvent {
     assignee: Option<Actor>,
     requested_reviewer: Option<Actor>,
     requested_team: Option<Team>,
-    installation: Option<InstallationId>,
+    installation: Option<InstallationLite>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
@@ -420,7 +422,7 @@ pub struct PullRequestReviewEvent {
     pull_request: PullRequest,
     repository: Repository,
     sender: Actor,
-    installation: InstallationId,
+    installation: InstallationLite,
 }
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
@@ -431,7 +433,7 @@ pub struct PullRequestReviewCommentEvent {
     pull_request: PullRequest,
     repository: Repository,
     sender: Actor,
-    installation: InstallationId,
+    installation: InstallationLite,
 }
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
@@ -558,4 +560,15 @@ pub struct WorkflowJobEvent {
     sender: Actor,
     organization: Option<Organization>,
     workflow_job: WorkflowJob,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct WorkflowRunEvent {
+    action: String,
+    repository: Repository,
+    sender: Actor,
+    organization: Option<Organization>,
+    workflow: Workflow,
+    workflow_run: WorkflowRun,
 }

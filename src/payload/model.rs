@@ -91,10 +91,13 @@ pub struct Repository {
     notifications_url: String,
     labels_url: String,
     releases_url: String,
+    #[serde(default)]
     #[serde(with = "serde_util::gh_comp_time")]
     created_at: Option<OffsetDateTime>,
+    #[serde(default)]
     #[serde(with = "serde_util::gh_comp_time")]
     updated_at: Option<OffsetDateTime>,
+    #[serde(default)]
     #[serde(with = "serde_util::gh_comp_time")]
     pushed_at: Option<OffsetDateTime>,
     git_url: String,
@@ -291,7 +294,7 @@ pub struct Team {
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
 #[get = "pub"]
-pub struct InstallationId {
+pub struct InstallationLite {
     id: i64,
     node_id: String,
 }
@@ -994,4 +997,120 @@ pub struct WorkflowStep {
     started_at: OffsetDateTime,
     #[serde(with = "serde_util::gh_comp_time")]
     completed_at: Option<OffsetDateTime>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct Workflow {
+    badge_url: String,
+    #[serde(with = "time::serde::rfc3339")]
+    created_at: OffsetDateTime,
+    html_url: String,
+    id: i64,
+    name: String,
+    node_id: String,
+    path: String,
+    state: String,
+    #[serde(with = "time::serde::rfc3339")]
+    updated_at: OffsetDateTime,
+    url: String,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct WorkflowRun {
+    artifacts_url: String,
+    cancel_url: String,
+    check_suite_url: String,
+    check_suite_id: i64,
+    check_suite_node_id: String,
+    conclusion: Option<String>,
+    #[serde(with = "time::serde::rfc3339")]
+    created_at: OffsetDateTime,
+    #[serde(with = "time::serde::rfc3339")]
+    updated_at: OffsetDateTime,
+    #[serde(with = "time::serde::rfc3339")]
+    run_started_at: OffsetDateTime,
+    event: String,
+    head_branch: String,
+    head_sha: String,
+    html_url: String,
+    id: i64,
+    jobs_url: String,
+    logs_url: String,
+    node_id: String,
+    name: String,
+    rerun_url: String,
+    run_number: i64,
+    status: String,
+    url: String,
+    workflow_id: i64,
+    workflow_url: String,
+    run_attempt: i64,
+    previous_attempt_url: Option<String>,
+    head_commit: SimpleCommit,
+    head_repository: RepositoryLite,
+    repository: RepositoryLite,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct RepositoryLite {
+    archive_url: String,
+    assignees_url: String,
+    blobs_url: String,
+    branches_url: String,
+    collaborators_url: String,
+    comments_url: String,
+    commits_url: String,
+    compare_url: String,
+    contents_url: String,
+    contributors_url: String,
+    deployments_url: String,
+    description: Option<String>,
+    downloads_url: String,
+    events_url: String,
+    fork: bool,
+    forks_url: String,
+    full_name: String,
+    git_commits_url: String,
+    git_refs_url: String,
+    git_tags_url: String,
+    hooks_url: String,
+    html_url: String,
+    id: i64,
+    issue_comment_url: String,
+    issue_events_url: String,
+    issues_url: String,
+    keys_url: String,
+    labels_url: String,
+    languages_url: String,
+    merges_url: String,
+    milestones_url: String,
+    name: String,
+    node_id: String,
+    notifications_url: String,
+    owner: Actor,
+    private: bool,
+    pulls_url: String,
+    releases_url: String,
+    stargazers_url: String,
+    statuses_url: String,
+    subscribers_url: String,
+    subscription_url: String,
+    tags_url: String,
+    teams_url: String,
+    trees_url: String,
+    url: String,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct SimpleCommit {
+    id: String,
+    tree_id: String,
+    message: String,
+    timestamp: String,
+    author: Committer,
+    committer: Committer,
 }
