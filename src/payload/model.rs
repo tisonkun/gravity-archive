@@ -17,6 +17,8 @@ use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value};
 use time::OffsetDateTime;
 
+use super::serde_util;
+
 #[derive(Deserialize, Serialize, Debug, Getters)]
 #[get = "pub"]
 pub struct Actor {
@@ -89,11 +91,11 @@ pub struct Repository {
     notifications_url: String,
     labels_url: String,
     releases_url: String,
-    #[serde(with = "option_time_number_or_string")]
+    #[serde(with = "serde_util::gh_comp_time")]
     created_at: Option<OffsetDateTime>,
-    #[serde(with = "option_time_number_or_string")]
+    #[serde(with = "serde_util::gh_comp_time")]
     updated_at: Option<OffsetDateTime>,
-    #[serde(with = "option_time_number_or_string")]
+    #[serde(with = "serde_util::gh_comp_time")]
     pushed_at: Option<OffsetDateTime>,
     git_url: String,
     ssh_url: String,
@@ -141,7 +143,7 @@ pub struct Issue {
     created_at: OffsetDateTime,
     #[serde(with = "time::serde::rfc3339")]
     updated_at: OffsetDateTime,
-    #[serde(with = "option_time_number_or_string")]
+    #[serde(with = "serde_util::gh_comp_time")]
     closed_at: Option<OffsetDateTime>,
     body: Option<String>,
 }
@@ -165,7 +167,7 @@ pub struct Milestone {
     created_at: OffsetDateTime,
     #[serde(with = "time::serde::rfc3339")]
     updated_at: OffsetDateTime,
-    #[serde(with = "option_time_number_or_string")]
+    #[serde(with = "serde_util::gh_comp_time")]
     closed_at: Option<OffsetDateTime>,
     #[serde(with = "time::serde::rfc3339")]
     due_on: OffsetDateTime,
@@ -314,9 +316,9 @@ pub struct PullRequest {
     created_at: OffsetDateTime,
     #[serde(with = "time::serde::rfc3339")]
     updated_at: OffsetDateTime,
-    #[serde(with = "option_time_number_or_string")]
+    #[serde(with = "serde_util::gh_comp_time")]
     closed_at: Option<OffsetDateTime>,
-    #[serde(with = "option_time_number_or_string")]
+    #[serde(with = "serde_util::gh_comp_time")]
     merged_at: Option<OffsetDateTime>,
     merge_commit_sha: Option<String>,
     assignee: Option<Actor>,
@@ -826,46 +828,4 @@ pub struct Committer {
     email: Option<String>,
     date: Option<String>,
     username: Option<String>,
-}
-
-// This trick is originally provided by @dtolnay at:
-// https://github.com/serde-rs/serde/issues/1301#issuecomment-394108486
-/// A helper module to workaround serde with customize functions for `Option`
-/// value and GitHub's legacy number format of time.
-pub(super) mod option_time_number_or_string {
-    use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
-    use serde_json::Value;
-    use time::{format_description::well_known::Rfc3339, OffsetDateTime};
-
-    pub fn serialize<S: Serializer>(
-        value: &Option<OffsetDateTime>,
-        serializer: S,
-    ) -> Result<S::Ok, S::Error> {
-        #[derive(Serialize)]
-        struct Wrapper<'a>(#[serde(with = "time::serde::rfc3339")] &'a OffsetDateTime);
-        value.as_ref().map(Wrapper).serialize(serializer)
-    }
-
-    pub fn deserialize<'de, D: Deserializer<'de>>(
-        deserializer: D,
-    ) -> Result<Option<OffsetDateTime>, D::Error> {
-        let value: Option<Value> = Option::deserialize(deserializer)?;
-
-        if value.is_some() {
-            let value = value.unwrap();
-            if let Some(ts) = value.as_i64() {
-                return OffsetDateTime::from_unix_timestamp(ts)
-                    .map(|t| Some(t))
-                    .map_err(D::Error::custom);
-            }
-
-            if let Some(t) = value.as_str() {
-                return OffsetDateTime::parse(t, &Rfc3339)
-                    .map(|t| Some(t))
-                    .map_err(D::Error::custom);
-            }
-        }
-
-        Ok(None)
-    }
 }

@@ -20,6 +20,7 @@ use time::OffsetDateTime;
 use crate::payload::model::*;
 
 pub mod model;
+pub(self) mod serde_util;
 
 #[derive(Debug)]
 pub enum Payload {
@@ -455,7 +456,7 @@ pub struct RepositoryEvent {
 #[get = "pub"]
 pub struct StarEvent {
     action: String,
-    #[serde(with = "model::option_time_number_or_string")]
+    #[serde(with = "serde_util::gh_comp_time")]
     starred_at: Option<OffsetDateTime>,
     repository: Repository,
     sender: Actor,
