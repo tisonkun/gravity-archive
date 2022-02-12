@@ -905,3 +905,53 @@ pub struct Reactions {
     rocket: i64,
     eyes: i64,
 }
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct StatusBranch {
+    name: String,
+    protected: bool,
+    commit: StatusRef,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct StatusRef {
+    sha: String,
+    url: String,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct StatusCommit {
+    sha: String,
+    node_id: String,
+    commit: StatusCommitInner,
+    url: String,
+    html_url: String,
+    comments_url: String,
+    author: Option<Actor>,
+    committer: Option<Actor>,
+    parents: Vec<StatusRef>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct StatusCommitInner {
+    author: Committer,
+    committer: Committer,
+    message: String,
+    tree: StatusRef,
+    url: String,
+    comment_count: i64,
+    verification: StatusVerification,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct StatusVerification {
+    verified: bool,
+    reason: String,
+    signature: Option<String>,
+    payload: Option<String>,
+}
