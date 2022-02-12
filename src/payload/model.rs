@@ -1114,3 +1114,74 @@ pub struct SimpleCommit {
     author: Committer,
     committer: Committer,
 }
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct SecurityAdvisory {
+    ghsa_id: String,
+    summary: String,
+    description: String,
+    severity: String,
+    #[serde(with = "time::serde::rfc3339")]
+    published_at: OffsetDateTime,
+    #[serde(with = "time::serde::rfc3339")]
+    updated_at: OffsetDateTime,
+    #[serde(default)]
+    #[serde(with = "serde_util::gh_comp_time")]
+    withdrawn_at: Option<OffsetDateTime>,
+    references: Vec<UrlRef>,
+    identifiers: Vec<SecurityAdvisoryIdentifier>,
+    cvss: SecurityAdvisoryIdentifierCvss,
+    cwes: Vec<SecurityAdvisoryIdentifierCwes>,
+    vulnerabilities: Vec<SecurityAdvisoryVulnerability>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct UrlRef {
+    url: String,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct SecurityAdvisoryIdentifier {
+    value: String,
+    #[serde(alias = "type")]
+    typ: String,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct SecurityAdvisoryIdentifierCvss {
+    vector_string: Option<String>,
+    score: f64,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct SecurityAdvisoryIdentifierCwes {
+    cwe_id: String,
+    name: String,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct SecurityAdvisoryVulnerability {
+    severity: String,
+    vulnerable_version_range: String,
+    package: SecurityAdvisoryVulnerabilityPackage,
+    first_patched_version: Option<SecurityAdvisoryVulnerabilityPatchedVersion>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct SecurityAdvisoryVulnerabilityPackage {
+    ecosystem: String,
+    name: String,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct SecurityAdvisoryVulnerabilityPatchedVersion {
+    identifier: String,
+}
