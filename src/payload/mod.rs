@@ -64,6 +64,7 @@ pub enum Payload {
     TeamEvent(Box<TeamEvent>),
     WatchEvent(Box<WatchEvent>),
     WorkflowDispatchEvent(Box<WorkflowDispatchEvent>),
+    WorkflowJobEvent(Box<WorkflowJobEvent>),
 }
 
 type Convertor = for<'a> fn(&'a [u8]) -> SerdeJsonResult<Payload>;
@@ -122,6 +123,7 @@ impl Payload {
             "team_add" => convertor_of!(TeamAddEvent),
             "watch" => convertor_of!(WatchEvent),
             "workflow_dispatch" => convertor_of!(WorkflowDispatchEvent),
+            "workflow_job" => convertor_of!(WorkflowJobEvent),
             _ => None,
         }
     }
@@ -546,4 +548,14 @@ pub struct WorkflowDispatchEvent {
     organization: Option<Organization>,
     workflow: String,
     inputs: Map<String, Value>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct WorkflowJobEvent {
+    action: String,
+    repository: Repository,
+    sender: Actor,
+    organization: Option<Organization>,
+    workflow_job: WorkflowJob,
 }

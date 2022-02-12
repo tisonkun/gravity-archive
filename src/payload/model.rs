@@ -955,3 +955,43 @@ pub struct StatusVerification {
     signature: Option<String>,
     payload: Option<String>,
 }
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct WorkflowJob {
+    id: i64,
+    run_id: i64,
+    run_attempt: i64,
+    run_url: String,
+    head_sha: String,
+    node_id: String,
+    name: String,
+    check_run_url: String,
+    html_url: String,
+    url: String,
+    status: String,
+    steps: Vec<WorkflowStep>,
+    conclusion: Option<String>,
+    labels: Vec<String>,
+    runner_id: Option<i64>,
+    runner_name: Option<String>,
+    runner_group_id: Option<i64>,
+    runner_group_name: Option<String>,
+    #[serde(with = "time::serde::rfc3339")]
+    started_at: OffsetDateTime,
+    #[serde(with = "serde_util::gh_comp_time")]
+    completed_at: Option<OffsetDateTime>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct WorkflowStep {
+    name: String,
+    status: String,
+    conclusion: Option<String>,
+    number: i64,
+    #[serde(with = "time::serde::rfc3339")]
+    started_at: OffsetDateTime,
+    #[serde(with = "serde_util::gh_comp_time")]
+    completed_at: Option<OffsetDateTime>,
+}
