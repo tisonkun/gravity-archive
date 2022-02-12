@@ -14,7 +14,7 @@
 
 use getset::Getters;
 use serde::{Deserialize, Serialize};
-use serde_json::Result as SerdeJsonResult;
+use serde_json::{Map, Result as SerdeJsonResult, Value};
 use time::OffsetDateTime;
 
 use crate::payload::model::*;
@@ -63,6 +63,7 @@ pub enum Payload {
     TeamAddEvent(Box<TeamAddEvent>),
     TeamEvent(Box<TeamEvent>),
     WatchEvent(Box<WatchEvent>),
+    WorkflowDispatchEvent(Box<WorkflowDispatchEvent>),
 }
 
 type Convertor = for<'a> fn(&'a [u8]) -> SerdeJsonResult<Payload>;
@@ -120,6 +121,7 @@ impl Payload {
             "team" => convertor_of!(TeamEvent),
             "team_add" => convertor_of!(TeamAddEvent),
             "watch" => convertor_of!(WatchEvent),
+            "workflow_dispatch" => convertor_of!(WorkflowDispatchEvent),
             _ => None,
         }
     }
@@ -532,4 +534,16 @@ pub struct WatchEvent {
     action: String,
     repository: Repository,
     sender: Actor,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct WorkflowDispatchEvent {
+    #[serde(alias = "ref")]
+    refer: String,
+    repository: Repository,
+    sender: Actor,
+    organization: Option<Organization>,
+    workflow: String,
+    inputs: Map<String, Value>,
 }
