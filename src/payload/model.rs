@@ -879,6 +879,18 @@ pub struct ReleaseAsset {
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
 #[get = "pub"]
+pub struct RepositoryVulnerabilityAlert {
+    dismisser: Option<Actor>,
+    id: i64,
+    affected_range: String,
+    affected_package_name: String,
+    external_reference: String,
+    external_identifier: String,
+    fixed_in: String,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
 pub struct Reactions {
     url: String,
     total_count: i64,
