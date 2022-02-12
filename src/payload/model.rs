@@ -829,3 +829,67 @@ pub struct Committer {
     date: Option<String>,
     username: Option<String>,
 }
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct Release {
+    url: String,
+    assets_url: String,
+    upload_url: String,
+    html_url: String,
+    id: i64,
+    node_id: String,
+    tag_name: String,
+    target_commitish: String,
+    name: String,
+    draft: bool,
+    author: Actor,
+    prerelease: bool,
+    #[serde(with = "time::serde::rfc3339")]
+    created_at: OffsetDateTime,
+    #[serde(with = "time::serde::rfc3339")]
+    published_at: OffsetDateTime,
+    tarball_url: Option<String>,
+    zipball_url: Option<String>,
+    body: String,
+    assets: Vec<ReleaseAsset>,
+    discussion_url: Option<String>,
+    reactions: Option<Reactions>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct ReleaseAsset {
+    url: String,
+    browser_download_url: String,
+    id: i64,
+    node_id: String,
+    name: String,
+    label: Option<String>,
+    state: String,
+    content_type: String,
+    size: i64,
+    download_count: i64,
+    #[serde(with = "time::serde::rfc3339")]
+    created_at: OffsetDateTime,
+    #[serde(with = "time::serde::rfc3339")]
+    updated_at: OffsetDateTime,
+    uploader: Option<Actor>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct Reactions {
+    url: String,
+    total_count: i64,
+    #[serde(alias = "+1")]
+    up: i64,
+    #[serde(alias = "-1")]
+    down: i64,
+    laugh: i64,
+    hooray: i64,
+    confused: i64,
+    heart: i64,
+    rocket: i64,
+    eyes: i64,
+}
