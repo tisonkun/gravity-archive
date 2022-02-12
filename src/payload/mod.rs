@@ -55,6 +55,7 @@ pub enum Payload {
     PullRequestReviewEvent(Box<PullRequestReviewEvent>),
     PullRequestReviewCommentEvent(Box<PullRequestReviewCommentEvent>),
     PushEvent(Box<PushEvent>),
+    ReleaseEvent(Box<ReleaseEvent>),
     RepositoryEvent(Box<RepositoryEvent>),
     StarEvent(Box<StarEvent>),
     TeamAddEvent(Box<TeamAddEvent>),
@@ -109,6 +110,7 @@ impl Payload {
             "pull_request_review" => convertor_of!(PullRequestReviewEvent),
             "pull_request_review_comment" => convertor_of!(PullRequestReviewCommentEvent),
             "push" => convertor_of!(PushEvent),
+            "release" => convertor_of!(ReleaseEvent),
             "repository" => convertor_of!(RepositoryEvent),
             "star" => convertor_of!(StarEvent),
             "team" => convertor_of!(TeamEvent),
@@ -441,6 +443,15 @@ pub struct PushEvent {
     sender: Actor,
     commits: Vec<Commit>,
     head_commit: Option<Commit>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct ReleaseEvent {
+    action: String,
+    release: Release,
+    repository: Repository,
+    sender: Actor,
 }
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
