@@ -59,6 +59,7 @@ pub enum Payload {
     RepositoryEvent(Box<RepositoryEvent>),
     RepositoryVulnerabilityAlertEvent(Box<RepositoryVulnerabilityAlertEvent>),
     StarEvent(Box<StarEvent>),
+    StatusEvent(Box<StatusEvent>),
     TeamAddEvent(Box<TeamAddEvent>),
     TeamEvent(Box<TeamEvent>),
     WatchEvent(Box<WatchEvent>),
@@ -115,6 +116,7 @@ impl Payload {
             "repository" => convertor_of!(RepositoryEvent),
             "repository_vulnerability_alert" => convertor_of!(RepositoryVulnerabilityAlertEvent),
             "star" => convertor_of!(StarEvent),
+            "status" => convertor_of!(StatusEvent),
             "team" => convertor_of!(TeamEvent),
             "team_add" => convertor_of!(TeamAddEvent),
             "watch" => convertor_of!(WatchEvent),
@@ -483,6 +485,27 @@ pub struct StarEvent {
     starred_at: Option<OffsetDateTime>,
     repository: Repository,
     sender: Actor,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct StatusEvent {
+    id: i64,
+    sha: String,
+    name: String,
+    avatar_url: Option<String>,
+    target_url: Option<String>,
+    context: String,
+    description: Option<String>,
+    state: String,
+    #[serde(with = "time::serde::rfc3339")]
+    created_at: OffsetDateTime,
+    #[serde(with = "time::serde::rfc3339")]
+    updated_at: OffsetDateTime,
+    repository: Repository,
+    sender: Actor,
+    organization: Option<Organization>,
+    branches: Vec<StatusBranch>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Getters)]
