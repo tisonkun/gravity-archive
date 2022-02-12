@@ -57,6 +57,7 @@ pub enum Payload {
     PushEvent(Box<PushEvent>),
     ReleaseEvent(Box<ReleaseEvent>),
     RepositoryEvent(Box<RepositoryEvent>),
+    RepositoryVulnerabilityAlertEvent(Box<RepositoryVulnerabilityAlertEvent>),
     StarEvent(Box<StarEvent>),
     TeamAddEvent(Box<TeamAddEvent>),
     TeamEvent(Box<TeamEvent>),
@@ -112,6 +113,7 @@ impl Payload {
             "push" => convertor_of!(PushEvent),
             "release" => convertor_of!(ReleaseEvent),
             "repository" => convertor_of!(RepositoryEvent),
+            "repository_vulnerability_alert" => convertor_of!(RepositoryVulnerabilityAlertEvent),
             "star" => convertor_of!(StarEvent),
             "team" => convertor_of!(TeamEvent),
             "team_add" => convertor_of!(TeamAddEvent),
@@ -458,6 +460,16 @@ pub struct ReleaseEvent {
 #[get = "pub"]
 pub struct RepositoryEvent {
     action: String,
+    repository: Repository,
+    organization: Option<Organization>,
+    sender: Actor,
+}
+
+#[derive(Deserialize, Serialize, Debug, Getters)]
+#[get = "pub"]
+pub struct RepositoryVulnerabilityAlertEvent {
+    action: String,
+    alert: RepositoryVulnerabilityAlert,
     repository: Repository,
     organization: Option<Organization>,
     sender: Actor,
