@@ -19,4 +19,4 @@ jobs:
       - name: Fetch up-to-date specification
         run: curl -O https://octokit.github.io/webhooks/payload-examples/api.github.com/index.json
       - name: Check diff
-        run: diff index.json tests/testdata/specification.json
+        run: diff index.json gravity-model/tests/testdata/specification.json

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use gravity::payload::Payload;
+use gravity_model::github::payload::Payload;
 use serde_json::Value;
 
 #[test]

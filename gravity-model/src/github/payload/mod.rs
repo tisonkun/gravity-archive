@@ -13,11 +13,10 @@
 // limitations under the License.
 
 use getset::Getters;
+use model::*;
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Result as SerdeJsonResult, Value};
 use time::OffsetDateTime;
-
-use crate::payload::model::*;
 
 pub mod model;
 pub(self) mod serde_util;
