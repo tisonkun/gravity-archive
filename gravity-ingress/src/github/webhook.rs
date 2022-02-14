@@ -80,7 +80,7 @@ pub async fn handle_request(req: Request<Body>) -> Result<Payload, Error> {
         Err(e) => {
             return Err(Error::new(
                 StatusCode::INTERNAL_SERVER_ERROR,
-                format!("FAILED GET PAYLOAD BYTES (MSG: {})", e.to_string()),
+                format!("FAILED GET PAYLOAD BYTES (MSG: {})", e),
             ));
         }
     };
@@ -96,7 +96,7 @@ pub async fn handle_request(req: Request<Body>) -> Result<Payload, Error> {
             Err(e) => {
                 return Err(Error::new(
                     StatusCode::INTERNAL_SERVER_ERROR,
-                    format!("FAILED GET HMAC SHA256 (MSG: {})", e.to_string()),
+                    format!("FAILED GET HMAC SHA256 (MSG: {})", e),
                 ));
             }
         };
@@ -128,7 +128,7 @@ pub async fn handle_request(req: Request<Body>) -> Result<Payload, Error> {
         Ok(payload) => Ok(payload),
         Err(e) => Err(Error::new(
             StatusCode::INTERNAL_SERVER_ERROR,
-            format!("FAILED CONVERT PAYLOAD (MSG: {})\n", e.to_string()),
+            format!("FAILED CONVERT PAYLOAD (MSG: {})\n", e),
         )),
     }
 }
