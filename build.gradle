@@ -1,0 +1,118 @@
+plugins {
+    id 'java'
+    id 'nebula.dependency-recommender' version '9.0.2'
+    id 'com.diffplug.spotless' version '6.3.0'
+}
+
+dependencyRecommendations {
+    propertiesFile file: file('versions.props')
+}
+
+allprojects {
+    group 'org.tisonkun.gravity'
+    version '0.1-SNAPSHOT'
+
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+}
+
+subprojects {
+    apply plugin: 'com.diffplug.spotless'
+    apply plugin: 'java'
+    apply plugin: 'nebula.dependency-recommender'
+
+
+    spotless {
+        format 'misc', {
+            // define the files to apply `misc` to
+            target '*.gradle', '*.md', '.gitignore'
+
+            // define the steps to apply to those files
+            trimTrailingWhitespace()
+            indentWithSpaces(4)
+            endWithNewline()
+        }
+
+        java {
+            importOrder('', 'static ')
+            removeUnusedImports()
+            trimTrailingWhitespace()
+            indentWithSpaces(4)
+            endWithNewline()
+        }
+    }
+
+    compileJava {
+        options.encoding = "UTF-8"
+    }
+
+    compileTestJava {
+        options.encoding = "UTF-8"
+    }
+
+    javadoc {
+        options.encoding = 'UTF-8'
+    }
+
+    sourceCompatibility = 17
+    targetCompatibility = 17
+
+    dependencies {
+        implementation 'org.slf4j:slf4j-api'
+
+        testImplementation 'org.junit.vintage:junit-vintage-engine'
+        testImplementation 'org.junit.jupiter:junit-jupiter-engine'
+        testImplementation 'org.junit.jupiter:junit-jupiter'
+        testImplementation 'org.slf4j:slf4j-simple'
+        testImplementation 'org.mockito:mockito-core'
+        testImplementation 'org.assertj:assertj-core'
+    }
+
+    test {
+        mkdir("${rootDir}/build/testlogs")
+        delete("${rootDir}/build/testlogs/${project.name}.log")
+        def buildLog = new File("${rootDir}/build/testlogs/${project.name}.log")
+        addTestOutputListener(new TestOutputListener() {
+            def lastDescriptor
+            @Override
+            void onOutput(TestDescriptor testDescriptor, TestOutputEvent testOutputEvent) {
+                if (lastDescriptor != testDescriptor) {
+                    buildLog << "--------\n- Test log for: "<< testDescriptor << "\n--------\n"
+                    lastDescriptor = testDescriptor
+                }
+                buildLog << testOutputEvent.destination << " " << testOutputEvent.message
+            }
+        })
+
+        testLogging {
+            events "failed"
+            exceptionFormat "full"
+        }
+    }
+}
+
+project(':gravity-model') {
+    dependencies {
+        compileOnly 'org.projectlombok:lombok:1.18.22'
+        annotationProcessor 'org.projectlombok:lombok:1.18.22'
+
+        testCompileOnly 'org.projectlombok:lombok:1.18.22'
+        testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
+
+        implementation 'com.fasterxml.jackson.core:jackson-annotations'
+        implementation 'com.fasterxml.jackson.core:jackson-core'
+        implementation 'com.fasterxml.jackson.core:jackson-databind'
+    }
+}
+
+project(':gravity-ingress') {
+    dependencies {
+        implementation project(":gravity-model")
+
+        implementation 'com.fasterxml.jackson.core:jackson-annotations'
+        implementation 'com.fasterxml.jackson.core:jackson-core'
+        implementation 'com.fasterxml.jackson.core:jackson-databind'
+    }
+}

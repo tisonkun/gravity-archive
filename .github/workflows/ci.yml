@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '25 4 * * *'
+
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  license:
+    if: (github.event_name == 'schedule' && github.repository == 'tisonkun/gravity') || (github.event_name != 'schedule')
+    name: Check license header
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: apache/skywalking-eyes@main
+        with:
+          config: tools/ci/licenserc.yml
+
+  build:
+    if: (github.event_name == 'schedule' && github.repository == 'tisonkun/gravity') || (github.event_name != 'schedule')
+    name: Check build
+    needs: [license]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Check Skip CI
+        id: skip-ci
+        uses: ./.github/actions/skip
+      - name: Setup Java
+        if: steps.skip-ci.outputs.skip != 'true'
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Gradle build
+        if: steps.skip-ci.outputs.skip != 'true'
+        run: ./gradlew build -x test
+
+  pass:
+    name: All tests passed
+    runs-on: ubuntu-latest
+    needs:
+      - license
+      - build
+    steps:
+      - run: exit 0
